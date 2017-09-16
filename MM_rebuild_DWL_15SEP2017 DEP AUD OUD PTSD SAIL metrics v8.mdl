@@ -1,0 +1,1440 @@
+{UTF-8}
+Avg MM AUD Care Episode=
+	520
+	~	Weeks
+	~		|
+
+MM AUD Patients= INTEG (
+	+MM AUD Becoming a Patient-MM AUD Stopping-MM AUD One and Down Stopping,
+		0)
+	~	
+	~		|
+
+Avg MM OUD Care Episode=
+	520
+	~	Weeks
+	~		|
+
+Avg MM OUD Care Episode 0=
+	520
+	~	Weeks
+	~		|
+
+Avg MM PTSD Care Episode=
+	520
+	~	Weeks
+	~		|
+
+Effect of MM AUD WP on Attendance Rate= WITH LOOKUP (
+	MM AUD Work Pressure,
+		([(0,1)-(1,10)],(0,1),(0.0458716,6.05263),(0.0948012,7.98246),(0.134557,8.90351),(0.262997\
+		,9.25439),(0.33945,9.42982),(0.547401,9.60526),(1,10) ))
+	~	dmnl
+	~		|
+
+Effect of MM AUD WP on Missed Appt Rate= WITH LOOKUP (
+	MM AUD Work Pressure,
+		([(0,1)-(1,10)],(0,10),(0.24159,9.32895),(0.510703,8.26316),(0.801223,4.86842),(1,1\
+		) ))
+	~	dmnl
+	~		|
+
+MM OUD Appts Attended 0= INTEG (
+	MM OUD Attendance Rate 0,
+		0)
+	~	
+	~		|
+
+MM OUD Appts Scheduled= INTEG (
+	+MM OUD Scheduling Rate-MM OUD Attendance Rate-MM OUD Missed Appt Rate+MM OUD Resheduling Rate\
+		,
+		1)
+	~	Appts
+	~		|
+
+Effect of MM OUD WP on Attendance Rate= WITH LOOKUP (
+	MM OUD Work Pressure,
+		([(0,1)-(1,10)],(0,1),(0.0458716,6.05263),(0.0948012,7.98246),(0.134557,8.90351),(0.262997\
+		,9.25439),(0.33945,9.42982),(0.547401,9.60526),(1,10) ))
+	~	dmnl
+	~		|
+
+Effect of MM OUD WP on Attendance Rate 0= WITH LOOKUP (
+	MM OUD Work Pressure 0,
+		([(0,1)-(1,10)],(0,1),(0.0458716,6.05263),(0.0948012,7.98246),(0.134557,8.90351),(0.262997\
+		,9.25439),(0.33945,9.42982),(0.547401,9.60526),(1,10) ))
+	~	dmnl
+	~		|
+
+Effect of MM OUD WP on Missed Appt Rate= WITH LOOKUP (
+	MM OUD Work Pressure,
+		([(0,1)-(1,10)],(0,10),(0.24159,9.32895),(0.510703,8.26316),(0.801223,4.86842),(1,1\
+		) ))
+	~	dmnl
+	~		|
+
+Effect of MM OUD WP on Missed Appt Rate 0= WITH LOOKUP (
+	MM OUD Work Pressure 0,
+		([(0,1)-(1,10)],(0,10),(0.24159,9.32895),(0.510703,8.26316),(0.801223,4.86842),(1,1\
+		) ))
+	~	dmnl
+	~		|
+
+Effect of MM PTSD WP on Attendance Rate= WITH LOOKUP (
+	MM PTSD Work Pressure,
+		([(0,1)-(1,10)],(0,1),(0.0458716,6.05263),(0.0948012,7.98246),(0.134557,8.90351),(0.262997\
+		,9.25439),(0.33945,9.42982),(0.547401,9.60526),(1,10) ))
+	~	dmnl
+	~		|
+
+Effect of MM PTSD WP on Missed Appt Rate= WITH LOOKUP (
+	MM PTSD Work Pressure,
+		([(0,1)-(1,10)],(0,10),(0.24159,9.32895),(0.510703,8.26316),(0.801223,4.86842),(1,1\
+		) ))
+	~	dmnl
+	~		|
+
+Expected Appt per Patient per 180 Day Assess Period=
+	12
+	~	
+	~		|
+
+Expected Appt per Patient per 84 Day Assess Period=
+	12
+	~	Appt/Patient
+	~		|
+
+Expected New MM AUD Patient Rate=
+	2.05
+	~	Persons/Week
+	~		|
+
+MM OUD New Patient Visit Frequency=
+	MM OUD Becoming a Patient
+	~	Appts/Week
+	~		|
+
+Expected New MM OUD Patient Rate=
+	2.05
+	~	Persons/Week
+	~		|
+
+Expected New MM OUD Patient Rate 0=
+	2.05
+	~	Persons/Week
+	~		|
+
+Expected New MM PTSD Patient Rate=
+	2.05
+	~	Persons/Week
+	~		|
+
+"Maximum Possible Scheduling Rate - MM AUD"=
+	MM AUD Patients Wating for 1st Visit/"Minimum Scheduling Delay - MM AUD"
+	~	Patients/Week
+	~		|
+
+MM OUD One and Down Patients 0= INTEG (
+	+MM OUD One and Down Stopping 0,
+		0)
+	~	
+	~		|
+
+"Maximum Possible Scheduling Rate - MM OUD 0"=
+	MM OUD Patients Wating for 1st Visit 0/"Minimum Scheduling Delay - MM OUD 0"
+	~	Patients/Week
+	~		|
+
+"Maximum Possible Scheduling Rate - MM OUD"=
+	MM OUD Patients Wating for 1st Visit/"Minimum Scheduling Delay - MM OUD"
+	~	Patients/Week
+	~		|
+
+"Maximum Possible Scheduling Rate - MM PTSD"=
+	MM PTSD Patients Wating for 1st Visit/"Minimum Scheduling Delay - MM PTSD"
+	~	Patients/Week
+	~		|
+
+"Minimum Scheduling Delay - MM AUD"=
+	1
+	~	Weeks
+	~		|
+
+MM OUD Patients Completed= INTEG (
+	MM OUD Stopping,
+		0)
+	~	
+	~		|
+
+"Minimum Scheduling Delay - MM OUD 0"=
+	1
+	~	Weeks
+	~		|
+
+"Minimum Scheduling Delay - MM OUD"=
+	1
+	~	Weeks
+	~		|
+
+"Minimum Scheduling Delay - MM PTSD"=
+	1
+	~	Weeks
+	~		|
+
+"MM AUD % Missed Appt Rate"=
+	GET XLS CONSTANTS('CC_Values.xlsx','CCValues','missedOpRate')
+	~	dmnl
+	~		|
+
+"MM AUD % One and Done Appt Rate"=
+	0.44
+	~	
+	~		|
+
+MM AUD Appts Attended= INTEG (
+	MM AUD Attendance Rate,
+		0)
+	~	
+	~		|
+
+MM AUD Appts Scheduled= INTEG (
+	+MM AUD Scheduling Rate-MM AUD Attendance Rate-MM AUD Missed Appt Rate+MM AUD Resheduling Rate\
+		,
+		1)
+	~	Appts
+	~		|
+
+MM AUD Attendance Rate=
+	(MM AUD Appts Scheduled*(1-"MM AUD % Missed Appt Rate"))/MM AUD Return Interval
+	~	Appts/Week
+	~		|
+
+MM AUD Becoming a Patient=
+	MIN("Maximum Possible Scheduling Rate - MM AUD",Patients Receving 1st MM AUD Appt)
+	~	Patients/Week
+	~		|
+
+MM AUD Existing Patient Visit Frequency=
+	MM AUD Attendance Rate*"MM AUD % One and Done Appt Rate"
+	~	Appts/Week
+	~		|
+
+MM AUD Missed Appt Rate=
+	(MM AUD Appts Scheduled*"MM AUD % Missed Appt Rate")/(MM AUD Return Interval/Effect of MM AUD WP on Missed Appt Rate\
+		)
+	~	Appt/Week
+	~		|
+
+MM AUD New Patient Visit Frequency=
+	MM AUD Becoming a Patient
+	~	Appts/Week
+	~		|
+
+"MM AUD No-Shows to Reschedule"= INTEG (
+	MM AUD Missed Appt Rate-MM AUD Resheduling Rate,
+		0)
+	~	Appts
+	~		|
+
+MM AUD One and Down Patients= INTEG (
+	+MM AUD One and Down Stopping,
+		0)
+	~	
+	~		|
+
+MM AUD One and Down Stopping=
+	(MM AUD Patients*"MM AUD % One and Done Appt Rate")/MM AUD time to first appt
+	~	
+	~		|
+
+MM OUD Supply for New Patients=
+	MAX((MM OUD Total Supply-MM OUD Supply Used by All Pts),Expected New MM OUD Patient Rate\
+		)
+	~	Appts/Week
+	~		|
+
+MM AUD Patients Completed= INTEG (
+	MM AUD Stopping,
+		0)
+	~	
+	~		|
+
+MM AUD Patients Wating for 1st Visit= INTEG (
+	+MM AUD Scheduling New Patients+MM AUD Becoming a Patient,
+		0)
+	~	Patients
+	~		|
+
+MM AUD Resheduling Rate=
+	"MM AUD No-Shows to Reschedule"/"Minimum Scheduling Delay - MM AUD"
+	~	Appts/Week
+	~		|
+
+MM AUD Return Interval=
+	26/Effect of MM AUD WP on Attendance Rate
+	~	Weeks
+	~		|
+
+MM AUD Scheduling Efficiency=
+	0.5
+	~	dmnl
+	~	The percent of open slots actually used for new patients.
+	|
+
+MM AUD Scheduling New Patients=
+	Expected New MM AUD Patient Rate
+	~	Patients/Week
+	~		|
+
+MM AUD Scheduling Rate=
+	IF THEN ELSE(MM AUD Appts Scheduled<=MM AUD Total Supply, (MM AUD New Patient Visit Frequency\
+		+MM AUD Existing Patient Visit Frequency) , 0 )
+	~	Appts/Week
+	~		|
+
+MM AUD Stopping=
+	(MM AUD Patients*(1-"MM AUD % One and Done Appt Rate"))/Avg MM AUD Care Episode
+	~	Patients/Week
+	~		|
+
+MM AUD Supply for New Patients=
+	MAX((MM AUD Total Supply-MM AUD Supply Used by All Pts),Expected New MM AUD Patient Rate\
+		)
+	~	Appts/Week
+	~		|
+
+MM AUD Supply Used by All Pts=
+	MM AUD Appts Scheduled+"MM AUD No-Shows to Reschedule"
+	~	Appts
+	~		|
+
+MM AUD time to first appt=
+	2
+	~	Weeks
+	~		|
+
+MM AUD Total Supply=
+	GET XLS CONSTANTS('CC_Values.xlsx','CCValues','SeventyFivePUsage')
+	~	Appts/Week
+	~		|
+
+MM AUD Work Pressure=
+	MM AUD Appts Scheduled/MM AUD Total Supply
+	~	dmnl
+	~		|
+
+MM PTSD Attendance Rate=
+	(MM PTSD Appts Scheduled*(1-"MM PTSD % Missed Appt Rate"))/MM PTSD Return Interval
+	~	Appts/Week
+	~		|
+
+MM PTSD Becoming a Patient=
+	MIN("Maximum Possible Scheduling Rate - MM PTSD",Patients Receving 1st MM PTSD Appt)
+	~	Patients/Week
+	~		|
+
+MM DEP 180 Day Assessment Period SAIL=
+	26
+	~	Weeks
+	~		|
+
+MM DEP 180 Day SAIL Metric=
+	(MM DEP Attendance Rate*MM DEP 180 Day Assessment Period SAIL)/(MM DEP Patients*Expected Appt per Patient per 180 Day Assess Period\
+		)
+	~	dmnl
+	~		|
+
+MM DEP 84 Day Assessment Period SAIL=
+	12
+	~	Weeks
+	~		|
+
+MM DEP 84 Day SAIL Metric=
+	(MM DEP Attendance Rate*MM DEP 84 Day Assessment Period SAIL)/(MM DEP Patients*Expected Appt per Patient per 84 Day Assess Period\
+		)
+	~	dmnl
+	~		|
+
+MM PTSD One and Down Patients= INTEG (
+	+MM PTSD One and Down Stopping,
+		0)
+	~	
+	~		|
+
+MM PTSD One and Down Stopping=
+	(MM PTSD Patients*"MM PTSD % One and Done Appt Rate")/MM PTSD time to first appt
+	~	
+	~		|
+
+MM PTSD Patients= INTEG (
+	+MM PTSD Becoming a Patient-MM PTSD Stopping-MM PTSD One and Down Stopping,
+		0)
+	~	
+	~		|
+
+MM PTSD Patients Completed= INTEG (
+	MM PTSD Stopping,
+		0)
+	~	
+	~		|
+
+MM PTSD Patients Wating for 1st Visit= INTEG (
+	+MM PTSD Scheduling New Patients+MM PTSD Becoming a Patient,
+		0)
+	~	Patients
+	~		|
+
+MM PTSD Resheduling Rate=
+	"MM PTSD No-Shows to Reschedule"/"Minimum Scheduling Delay - MM PTSD"
+	~	Appts/Week
+	~		|
+
+MM PTSD Return Interval=
+	26/Effect of MM PTSD WP on Attendance Rate
+	~	Weeks
+	~		|
+
+MM PTSD Scheduling Efficiency=
+	0.5
+	~	dmnl
+	~	The percent of open slots actually used for new patients.
+	|
+
+MM PTSD Scheduling New Patients=
+	Expected New MM PTSD Patient Rate
+	~	Patients/Week
+	~		|
+
+MM PTSD Scheduling Rate=
+	IF THEN ELSE(MM PTSD Appts Scheduled<=MM PTSD Total Supply, (MM PTSD New Patient Visit Frequency\
+		+MM PTSD Existing Patient Visit Frequency) , 0 )
+	~	Appts/Week
+	~		|
+
+MM PTSD Stopping=
+	(MM PTSD Patients*(1-"MM PTSD % One and Done Appt Rate"))/Avg MM PTSD Care Episode
+	~	Patients/Week
+	~		|
+
+MM DEP Patients Completed= INTEG (
+	MM DEP Stopping,
+		0)
+	~	
+	~		|
+
+MM PTSD Supply Used by All Pts=
+	MM PTSD Appts Scheduled+"MM PTSD No-Shows to Reschedule"
+	~	Appts
+	~		|
+
+MM PTSD time to first appt=
+	2
+	~	Weeks
+	~		|
+
+MM PTSD Total Supply=
+	GET XLS CONSTANTS('CC_Values.xlsx','CCValues','SeventyFivePUsage')
+	~	Appts/Week
+	~		|
+
+MM PTSD Work Pressure=
+	MM PTSD Appts Scheduled/MM PTSD Total Supply
+	~	dmnl
+	~		|
+
+Patients Receving 1st MM AUD Appt=
+	MM AUD Supply for New Patients*MM AUD Scheduling Efficiency*Pts per Appt
+	~	Patients/Week
+	~		|
+
+Patients Receving 1st MM DEP Appt=
+	(MM DEP Scheduling Efficiency*MM DEP Supply for New Patients*Pts per Appt)
+	~	Patients/Week
+	~		|
+
+Patients Receving 1st MM OUD Appt=
+	MM OUD Supply for New Patients*MM OUD Scheduling Efficiency*Pts per Appt
+	~	Patients/Week
+	~		|
+
+Patients Receving 1st MM OUD Appt 0=
+	(MM OUD Scheduling Efficiency 0*MM OUD Supply for New Patients 0)/MM OUD time to first appt 0
+	~	Patients/Week
+	~		|
+
+Patients Receving 1st MM PTSD Appt=
+	MM PTSD Supply for New Patients*MM PTSD Scheduling Efficiency*Pts per Appt
+	~	Patients/Week
+	~		|
+
+Pts per Appt=
+	1
+	~	Pts/Appt
+	~		|
+
+MM OUD Stopping 0=
+	(MM OUD Patients 0*(1-"MM OUD % One and Done Appt Rate 0"))/Avg MM OUD Care Episode 0
+	~	Patients/Week
+	~		|
+
+MM OUD One and Down Patients= INTEG (
+	+MM OUD One and Down Stopping,
+		0)
+	~	
+	~		|
+
+"MM OUD % Missed Appt Rate 0"=
+	GET XLS CONSTANTS('CC_Values.xlsx','CCValues','missedOpRate')
+	~	dmnl
+	~		|
+
+"MM OUD % Missed Appt Rate"=
+	GET XLS CONSTANTS('CC_Values.xlsx','CCValues','missedOpRate')
+	~	dmnl
+	~		|
+
+"MM OUD % One and Done Appt Rate 0"=
+	0.44
+	~	
+	~		|
+
+"MM OUD % One and Done Appt Rate"=
+	0.44
+	~	
+	~		|
+
+MM OUD Appts Attended= INTEG (
+	MM OUD Attendance Rate,
+		0)
+	~	
+	~		|
+
+MM OUD Total Supply=
+	GET XLS CONSTANTS('CC_Values.xlsx','CCValues','SeventyFivePUsage')
+	~	Appts/Week
+	~		|
+
+MM OUD Total Supply 0=
+	GET XLS CONSTANTS('CC_Values.xlsx','CCValues','SeventyFivePUsage')
+	~	Appts/Week
+	~		|
+
+MM OUD Appts Scheduled 0= INTEG (
+	+MM OUD Scheduling Rate 0-MM OUD Attendance Rate 0-MM OUD Missed Appt Rate 0+MM OUD Resheduling Rate 0\
+		,
+		1)
+	~	Appts
+	~		|
+
+MM OUD Attendance Rate=
+	(MM OUD Appts Scheduled*(1-"MM OUD % Missed Appt Rate"))/MM OUD Return Interval
+	~	Appts/Week
+	~		|
+
+MM OUD Attendance Rate 0=
+	(MM OUD Appts Scheduled 0*(1-"MM OUD % Missed Appt Rate 0"))/MM OUD Return Interval 0
+	~	Appts/Week
+	~		|
+
+MM OUD Becoming a Patient=
+	MIN("Maximum Possible Scheduling Rate - MM OUD",Patients Receving 1st MM OUD Appt)
+	~	Patients/Week
+	~		|
+
+MM OUD Becoming a Patient 0=
+	MIN("Maximum Possible Scheduling Rate - MM OUD 0",Patients Receving 1st MM OUD Appt 0\
+		)
+	~	Patients/Week
+	~		|
+
+MM OUD Existing Patient Visit Frequency=
+	MM OUD Attendance Rate*"MM OUD % One and Done Appt Rate"
+	~	Appts/Week
+	~		|
+
+MM OUD Existing Patient Visit Frequency 0=
+	MM OUD Attendance Rate 0*"MM OUD % One and Done Appt Rate 0"
+	~	Appts/Week
+	~		|
+
+MM OUD Missed Appt Rate=
+	(MM OUD Appts Scheduled*"MM OUD % Missed Appt Rate")/(MM OUD Return Interval/Effect of MM OUD WP on Missed Appt Rate\
+		)
+	~	Appt/Week
+	~		|
+
+MM OUD Missed Appt Rate 0=
+	(MM OUD Appts Scheduled 0*"MM OUD % Missed Appt Rate 0")/(MM OUD Return Interval 0/Effect of MM OUD WP on Missed Appt Rate 0\
+		)
+	~	Appt/Week
+	~		|
+
+MM PTSD Missed Appt Rate=
+	(MM PTSD Appts Scheduled*"MM PTSD % Missed Appt Rate")/(MM PTSD Return Interval/Effect of MM PTSD WP on Missed Appt Rate\
+		)
+	~	Appt/Week
+	~		|
+
+MM OUD New Patient Visit Frequency 0=
+	MM OUD Becoming a Patient 0
+	~	Appts/Week
+	~		|
+
+"MM OUD No-Shows to Reschedule 0"= INTEG (
+	MM OUD Missed Appt Rate 0-MM OUD Resheduling Rate 0,
+		0)
+	~	Appts
+	~		|
+
+"MM OUD No-Shows to Reschedule"= INTEG (
+	MM OUD Missed Appt Rate-MM OUD Resheduling Rate,
+		0)
+	~	Appts
+	~		|
+
+MM OUD Resheduling Rate=
+	"MM OUD No-Shows to Reschedule"/"Minimum Scheduling Delay - MM OUD"
+	~	Appts/Week
+	~		|
+
+MM OUD Resheduling Rate 0=
+	"MM OUD No-Shows to Reschedule 0"/"Minimum Scheduling Delay - MM OUD 0"
+	~	Appts/Week
+	~		|
+
+MM OUD One and Down Stopping=
+	(MM OUD Patients*"MM OUD % One and Done Appt Rate")/MM OUD time to first appt
+	~	
+	~		|
+
+MM OUD One and Down Stopping 0=
+	(MM OUD Patients 0*"MM OUD % One and Done Appt Rate 0")/MM OUD time to first appt 0
+	~	
+	~		|
+
+MM OUD Patients= INTEG (
+	+MM OUD Becoming a Patient-MM OUD Stopping-MM OUD One and Down Stopping,
+		0)
+	~	
+	~		|
+
+MM OUD Patients 0= INTEG (
+	+MM OUD Becoming a Patient 0-MM OUD Stopping 0-MM OUD One and Down Stopping 0,
+		0)
+	~	
+	~		|
+
+MM OUD time to first appt 0=
+	2
+	~	Weeks
+	~		|
+
+MM OUD Patients Completed 0= INTEG (
+	MM OUD Stopping 0,
+		0)
+	~	
+	~		|
+
+MM OUD Patients Wating for 1st Visit= INTEG (
+	+MM OUD Scheduling New Patients+MM OUD Becoming a Patient,
+		0)
+	~	Patients
+	~		|
+
+MM OUD Patients Wating for 1st Visit 0= INTEG (
+	+MM OUD Scheduling New Patients 0+MM OUD Becoming a Patient 0,
+		0)
+	~	Patients
+	~		|
+
+MM OUD Stopping=
+	(MM OUD Patients*(1-"MM OUD % One and Done Appt Rate"))/Avg MM OUD Care Episode
+	~	Patients/Week
+	~		|
+
+MM OUD Work Pressure 0=
+	MM OUD Appts Scheduled 0/MM OUD Total Supply 0
+	~	dmnl
+	~		|
+
+MM OUD Return Interval=
+	26/Effect of MM OUD WP on Attendance Rate
+	~	Weeks
+	~		|
+
+MM OUD Return Interval 0=
+	26/Effect of MM OUD WP on Attendance Rate 0
+	~	Weeks
+	~		|
+
+MM OUD Scheduling Efficiency=
+	0.5
+	~	dmnl
+	~	The percent of open slots actually used for new patients.
+	|
+
+MM OUD Scheduling Efficiency 0=
+	0.5
+	~	dmnl
+	~	The percent of open slots actually used for new patients.
+	|
+
+MM OUD Scheduling New Patients=
+	Expected New MM OUD Patient Rate
+	~	Patients/Week
+	~		|
+
+MM OUD Scheduling New Patients 0=
+	Expected New MM OUD Patient Rate 0
+	~	Patients/Week
+	~		|
+
+MM OUD Scheduling Rate=
+	IF THEN ELSE(MM OUD Appts Scheduled<=MM OUD Total Supply, (MM OUD New Patient Visit Frequency\
+		+MM OUD Existing Patient Visit Frequency) , 0 )
+	~	Appts/Week
+	~		|
+
+MM OUD Scheduling Rate 0=
+	IF THEN ELSE(MM OUD Appts Scheduled 0<=MM OUD Total Supply 0, (MM OUD New Patient Visit Frequency 0\
+		+MM OUD Existing Patient Visit Frequency 0) , 0 )
+	~	Appts/Week
+	~		|
+
+MM OUD Work Pressure=
+	MM OUD Appts Scheduled/MM OUD Total Supply
+	~	dmnl
+	~		|
+
+"MM PTSD No-Shows to Reschedule"= INTEG (
+	MM PTSD Missed Appt Rate-MM PTSD Resheduling Rate,
+		0)
+	~	Appts
+	~		|
+
+"MM PTSD % Missed Appt Rate"=
+	GET XLS CONSTANTS('CC_Values.xlsx','CCValues','missedOpRate')
+	~	dmnl
+	~		|
+
+MM OUD Supply for New Patients 0=
+	MAX((MM OUD Total Supply 0-MM OUD Supply Used by All Pts 0),Expected New MM OUD Patient Rate 0\
+		)
+	~	Appts/Week
+	~		|
+
+MM OUD Supply Used by All Pts=
+	MM OUD Appts Scheduled+"MM OUD No-Shows to Reschedule"
+	~	Appts
+	~		|
+
+MM OUD Supply Used by All Pts 0=
+	MM OUD Appts Scheduled 0+"MM OUD No-Shows to Reschedule 0"
+	~	Appts
+	~		|
+
+MM OUD time to first appt=
+	2
+	~	Weeks
+	~		|
+
+MM PTSD Appts Attended= INTEG (
+	MM PTSD Attendance Rate,
+		0)
+	~	
+	~		|
+
+MM PTSD Existing Patient Visit Frequency=
+	MM PTSD Attendance Rate*"MM PTSD % One and Done Appt Rate"
+	~	Appts/Week
+	~		|
+
+"MM PTSD % One and Done Appt Rate"=
+	0.44
+	~	
+	~		|
+
+MM PTSD New Patient Visit Frequency=
+	MM PTSD Becoming a Patient
+	~	Appts/Week
+	~		|
+
+MM PTSD Appts Scheduled= INTEG (
+	+MM PTSD Scheduling Rate-MM PTSD Attendance Rate-MM PTSD Missed Appt Rate+MM PTSD Resheduling Rate\
+		,
+		1)
+	~	Appts
+	~		|
+
+MM PTSD Supply for New Patients=
+	MAX((MM PTSD Total Supply-MM PTSD Supply Used by All Pts),Expected New MM PTSD Patient Rate\
+		)
+	~	Appts/Week
+	~		|
+
+MM DEP Scheduling New Patients=
+	Expected New MM DEP Patient Rate
+	~	Patients/Week
+	~		|
+
+MM DEP Supply Used by All Pts=
+	MM DEP Appts Scheduled+"MM DEP No-Shows to Reschedule"
+	~	Appts
+	~		|
+
+MM DEP Work Pressure=
+	MM DEP Appts Scheduled/MM DEP Total Supply
+	~	dmnl
+	~		|
+
+Expected New MM DEP Patient Rate=
+	2.05
+	~	Persons/Week
+	~		|
+
+MM DEP Supply for New Patients=
+	MAX((MM DEP Total Supply-MM DEP Supply Used by All Pts),Expected New MM DEP Patient Rate\
+		)
+	~	Appts/Week
+	~		|
+
+MM DEP time to first appt=
+	2
+	~	Weeks
+	~		|
+
+MM DEP One and Down Stopping=
+	(MM DEP Patients*"MM DEP % One and Done Appt Rate")/MM DEP time to first appt
+	~	
+	~		|
+
+MM DEP Becoming a Patient=
+	MIN("Maximum Possible Scheduling Rate - MM DEP",Patients Receving 1st MM DEP Appt)
+	~	Patients/Week
+	~		|
+
+MM DEP Appts Scheduled= INTEG (
+	+MM DEP Scheduling Rate-MM DEP Attendance Rate-MM DEP Missed Appt Rate+MM DEP Resheduling Rate\
+		,
+		1)
+	~	Appts
+	~		|
+
+MM DEP One and Down Patients= INTEG (
+	+MM DEP One and Down Stopping,
+		0)
+	~	
+	~		|
+
+MM DEP Patients= INTEG (
+	+MM DEP Becoming a Patient-MM DEP Stopping-MM DEP One and Down Stopping,
+		1)
+	~	
+	~		|
+
+MM DEP Attendance Rate=
+	(MM DEP Appts Scheduled*(1-"MM DEP % Missed Appt Rate"))/MM DEP Return Interval
+	~	Appts/Week
+	~		|
+
+MM DEP Stopping=
+	(MM DEP Patients*(1-"MM DEP % One and Done Appt Rate"))/Avg MM DEP Care Episode
+	~	Patients/Week
+	~		|
+
+MM DEP Existing Patient Visit Frequency=
+	MM DEP Attendance Rate*"MM DEP % One and Done Appt Rate"
+	~	Appts/Week
+	~		|
+
+"MM DEP % One and Done Appt Rate"=
+	0.44
+	~	
+	~		|
+
+"MM DEP % Missed Appt Rate"=
+	GET XLS CONSTANTS('CC_Values.xlsx','CCValues','missedOpRate')
+	~	dmnl
+	~		|
+
+Avg MM DEP Care Episode=
+	520
+	~	Weeks
+	~		|
+
+MM DEP Appts Attended= INTEG (
+	MM DEP Attendance Rate,
+		0)
+	~	
+	~		|
+
+MM DEP Missed Appt Rate=
+	(MM DEP Appts Scheduled*"MM DEP % Missed Appt Rate")/(MM DEP Return Interval/Effect of MM DEP WP on Missed Appt Rate\
+		)
+	~	Appt/Week
+	~		|
+
+MM DEP New Patient Visit Frequency=
+	MM DEP Becoming a Patient
+	~	Appts/Week
+	~		|
+
+"MM DEP No-Shows to Reschedule"= INTEG (
+	MM DEP Missed Appt Rate-MM DEP Resheduling Rate,
+		0)
+	~	Appts
+	~		|
+
+MM DEP Patients Wating for 1st Visit= INTEG (
+	+MM DEP Scheduling New Patients+MM DEP Becoming a Patient,
+		0)
+	~	Patients
+	~		|
+
+MM DEP Resheduling Rate=
+	"MM DEP No-Shows to Reschedule"/"Minimum Scheduling Delay - MM DEP"
+	~	Appts/Week
+	~		|
+
+MM DEP Return Interval=
+	26/Effect of MM DEP WP on Attendance Rate
+	~	Weeks
+	~		|
+
+MM DEP Scheduling Efficiency=
+	0.5
+	~	dmnl
+	~	The percent of open slots actually used for new patients.
+	|
+
+MM DEP Total Supply=
+	GET XLS CONSTANTS('CC_Values.xlsx','CCValues','SeventyFivePUsage')
+	~	Appts/Week
+	~		|
+
+MM DEP Scheduling Rate=
+	IF THEN ELSE(MM DEP Appts Scheduled<=MM DEP Total Supply, (MM DEP New Patient Visit Frequency\
+		+MM DEP Existing Patient Visit Frequency) , 0 )
+	~	Appts/Week
+	~		|
+
+Effect of MM DEP WP on Missed Appt Rate= WITH LOOKUP (
+	MM DEP Work Pressure,
+		([(0,1)-(1,10)],(0,10),(0.24159,9.32895),(0.510703,8.26316),(0.801223,4.86842),(1,1\
+		) ))
+	~	dmnl
+	~		|
+
+Effect of MM DEP WP on Attendance Rate= WITH LOOKUP (
+	MM DEP Work Pressure,
+		([(0,1)-(1,10)],(0,1),(0.0458716,6.05263),(0.0948012,7.98246),(0.134557,8.90351),(0.262997\
+		,9.25439),(0.33945,9.42982),(0.547401,9.60526),(1,10) ))
+	~	dmnl
+	~		|
+
+"Minimum Scheduling Delay - MM DEP"=
+	1
+	~	Weeks
+	~		|
+
+"Maximum Possible Scheduling Rate - MM DEP"=
+	MM DEP Patients Wating for 1st Visit/"Minimum Scheduling Delay - MM DEP"
+	~	Patients/Week
+	~		|
+
+********************************************************
+	.Control
+********************************************************~
+		Simulation Control Parameters
+	|
+
+FINAL TIME  = 260
+	~	Week
+	~	The final time for the simulation.
+	|
+
+INITIAL TIME  = 0
+	~	Week
+	~	The initial time for the simulation.
+	|
+
+SAVEPER  = 1
+	~	Week [0,?]
+	~	The frequency with which output is stored.
+	|
+
+TIME STEP  = 0.03125
+	~	Week [0,?]
+	~	The time step for the simulation.
+	|
+
+\\\---/// Sketch information - do not modify anything except names
+V300  Do not put anything below this section - it will be ignored
+*View 1
+$192-192-192,0,@Arial Unicode MS|12||0-0-0|0-0-0|0-0-255|-1--1--1|-1--1--1|120,120,70,0
+10,1,MM DEP Appts Scheduled,619,-717,90,48,3,131,0,0,0,0,0,0
+12,2,48,178,-730,10,8,0,3,0,0,-1,0,0,0
+1,3,5,1,4,0,0,22,0,0,0,-1--1--1,,1|(436,-735)|
+1,4,5,2,100,0,0,22,0,0,0,-1--1--1,,1|(257,-735)|
+11,5,48,335,-735,8,10,34,3,0,0,1,0,0,0
+10,6,MM DEP Scheduling Rate,335,-699,77,26,40,3,0,0,-1,0,0,0
+1,7,9,38,4,0,0,22,0,0,0,-1--1--1,,1|(967,-725)|
+1,8,9,1,100,0,0,22,0,0,0,-1--1--1,,1|(791,-725)|
+11,9,524,882,-725,8,10,34,3,0,0,1,0,0,0
+10,10,MM DEP Attendance Rate,882,-689,79,26,40,3,0,0,-1,0,0,0
+10,11,MM DEP New Patient Visit Frequency,287,-507,102,26,8,3,0,0,0,0,0,0
+1,12,11,6,1,0,0,0,0,128,0,-1--1--1,,1|(285,-608)|
+10,13,MM DEP Existing Patient Visit Frequency,414,-573,108,26,8,131,0,0,0,0,0,0
+1,14,13,6,1,0,0,0,0,128,0,-1--1--1,,1|(350,-623)|
+10,15,MM DEP Patients,1732,-114,79,50,3,131,0,0,0,0,0,0
+10,16,MM DEP Patients Wating for 1st Visit,1315,-112,81,46,3,131,0,0,0,0,0,0
+1,17,19,15,4,0,0,22,0,0,0,-1--1--1,,1|(1580,-117)|
+1,18,19,16,100,0,0,22,0,0,0,-1--1--1,,1|(1444,-117)|
+11,19,764,1500,-117,8,10,34,3,0,0,1,0,0,0
+10,20,MM DEP Becoming a Patient,1500,-81,91,26,40,3,0,0,-1,0,0,0
+12,21,48,941,-121,10,8,0,3,0,0,-1,0,0,0
+1,22,24,16,4,0,0,22,0,0,0,-1--1--1,,1|(1160,-119)|
+1,23,24,21,100,0,0,22,0,0,0,-1--1--1,,1|(1011,-119)|
+11,24,48,1079,-119,8,10,34,3,0,0,1,0,0,0
+10,25,MM DEP Scheduling New Patients,1079,-83,96,26,40,3,0,0,-1,0,0,0
+1,26,28,105,4,0,0,22,0,0,0,-1--1--1,,1|(2018,-114)|
+1,27,28,15,100,0,0,22,0,0,0,-1--1--1,,1|(1872,-114)|
+11,28,48,1942,-114,8,10,34,3,0,0,1,0,0,0
+10,29,MM DEP Stopping,1942,-89,43,26,40,3,0,0,-1,0,0,0
+10,30,MM DEP Supply for New Patients,1433,-997,93,26,72,131,0,0,0,0,0,0
+10,31,MM DEP Supply Used by All Pts,1740,-953,77,26,72,131,0,0,-1,0,0,0
+1,32,31,30,1,0,0,0,0,64,0,-1--1--1,,1|(1564,-1005)|
+10,33,MM DEP Total Supply,1279,-1088,69,26,72,131,0,2,-1,0,0,0,-1--1--1,0-0-0,|12||255-0-0
+1,34,33,30,1,0,0,0,0,64,0,-1--1--1,,1|(1344,-1063)|
+10,35,Avg MM DEP Care Episode,2002,-239,64,26,8,3,0,2,0,0,0,0,-1--1--1,0-0-0,|12||255-0-0
+1,36,35,29,1,0,0,0,0,128,0,-1--1--1,,1|(1986,-174)|
+1,37,15,29,1,0,0,0,0,128,0,-1--1--1,,1|(1828,-155)|
+10,38,MM DEP Appts Attended,1125,-719,81,48,3,131,0,0,0,0,0,0
+10,39,"MM DEP No-Shows to Reschedule",617,-1012,88,51,3,131,0,0,0,0,0,0
+1,40,42,39,4,0,0,22,0,0,0,-1--1--1,,1|(664,-913)|
+1,41,42,1,100,0,0,22,0,0,0,-1--1--1,,1|(664,-807)|
+11,42,236,664,-857,10,8,33,3,0,0,4,0,0,0
+10,43,MM DEP Missed Appt Rate,762,-857,88,38,40,131,0,0,-1,0,0,0
+1,44,46,1,4,0,0,22,0,0,0,-1--1--1,,1|(578,-808)|
+1,45,46,39,100,0,0,22,0,0,0,-1--1--1,,1|(578,-914)|
+11,46,556,578,-858,10,8,33,3,0,0,2,0,0,0
+10,47,MM DEP Resheduling Rate,498,-858,83,26,40,131,0,0,-1,0,0,0
+10,48,MM DEP Appts Scheduled,1933,-1075,79,26,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|12||128-128-128
+1,49,48,31,1,0,0,0,0,128,0,-1--1--1,,1|(1837,-1041)|
+10,50,"Minimum Scheduling Delay - MM DEP",1242,-366,97,26,8,3,0,0,0,0,0,0
+10,51,"Maximum Possible Scheduling Rate - MM DEP",1396,-257,104,39,8,3,0,0,0,0,0,0
+1,52,50,51,1,0,0,0,0,128,0,-1--1--1,,1|(1322,-332)|
+10,53,MM DEP Scheduling Efficiency,1904,-482,96,26,8,131,0,0,0,0,0,0
+10,54,Patients Receving 1st MM DEP Appt,1835,-275,84,26,8,131,0,2,0,0,0,0,-1--1--1,0-0-0,|12||255-0-0
+1,55,53,54,1,0,0,0,0,128,0,-1--1--1,,1|(1840,-417)|
+1,56,16,51,1,0,0,0,0,128,0,-1--1--1,,1|(1329,-198)|
+1,57,51,20,1,0,0,0,0,128,0,-1--1--1,,1|(1467,-184)|
+10,58,MM DEP Supply for New Patients,2066,-420,99,26,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|12||128-128-128
+1,59,58,54,1,0,0,0,0,128,0,-1--1--1,,1|(1974,-347)|
+10,60,"MM DEP No-Shows to Reschedule",1939,-843,100,26,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|12||128-128-128
+10,61,MM DEP Return Interval,996,-796,77,26,8,3,0,2,0,0,0,0,-1--1--1,0-0-0,|12||255-0-0
+1,62,54,20,1,0,0,0,0,128,0,-1--1--1,,1|(1624,-221)|
+1,63,20,11,1,0,0,0,0,128,0,-1--1--1,,1|(644,-180)|
+10,64,MM DEP Work Pressure,1056,-1033,63,56,8,131,0,0,0,0,0,0
+1,65,33,64,1,0,0,0,0,128,0,-1--1--1,,1|(1158,-1098)|
+10,66,Effect of MM DEP WP on Attendance Rate,1219,-894,85,46,8,131,0,0,0,0,0,0
+1,67,64,66,1,0,0,0,0,128,0,-1--1--1,,1|(1162,-1013)|
+1,68,1,10,0,0,0,0,0,128,0,-1--1--1,,1|(749,-704)|
+1,69,61,10,1,0,0,0,0,128,0,-1--1--1,,1|(939,-755)|
+10,70,Effect of MM DEP WP on Missed Appt Rate,849,-1072,83,39,8,131,0,0,0,0,0,0
+1,71,64,70,1,0,0,0,0,128,0,-1--1--1,,1|(956,-1089)|
+1,72,1,43,1,0,0,0,0,128,0,-1--1--1,,1|(687,-809)|
+1,73,39,47,1,0,0,0,0,128,0,-1--1--1,,1|(495,-1004)|
+10,74,"Minimum Scheduling Delay - MM DEP",293,-972,103,26,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|12||128-128-128
+1,75,74,47,1,0,0,0,0,128,0,-1--1--1,,1|(367,-883)|
+10,76,"MM DEP % Missed Appt Rate",885,-957,83,45,8,131,0,2,0,0,0,0,-1--1--1,0-0-0,|12||255-0-0
+1,77,76,43,1,0,0,0,0,128,0,-1--1--1,,1|(779,-921)|
+1,78,76,10,1,0,0,0,0,128,0,-1--1--1,,1|(901,-808)|
+1,79,1,64,1,0,0,0,0,128,0,-1--1--1,,1|(959,-870)|
+1,80,61,43,1,0,0,0,0,128,0,-1--1--1,,1|(846,-796)|
+10,81,MM DEP Total Supply,254,-819,75,26,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|12||128-128-128
+1,82,81,6,0,0,0,0,0,128,0,-1--1--1,,1|(290,-765)|
+1,83,1,6,1,0,0,0,0,128,0,-1--1--1,,1|(452,-679)|
+1,84,10,13,1,0,0,0,0,128,0,-1--1--1,,1|(709,-585)|
+1,85,66,61,1,0,0,0,0,128,0,-1--1--1,,1|(1123,-839)|
+1,86,70,43,1,0,0,0,0,128,0,-1--1--1,,1|(734,-997)|
+10,87,"MM DEP % One and Done Appt Rate",650,-402,88,57,8,131,0,2,0,0,0,0,-1--1--1,0-0-0,|12||255-0-0
+1,88,87,13,1,0,0,0,0,128,0,-1--1--1,,1|(520,-467)|
+10,89,MM DEP One and Down Patients,1730,141,79,50,3,131,0,0,0,0,0,0
+1,90,92,89,4,0,0,22,0,0,0,-1--1--1,,1|(1729,57)|
+1,91,92,15,100,0,0,22,0,0,0,-1--1--1,,1|(1729,-28)|
+11,92,588,1729,16,10,8,33,3,0,0,4,0,0,0
+10,93,MM DEP One and Down Stopping,1825,16,86,26,40,3,0,0,-1,0,0,0
+1,94,15,93,0,0,0,0,0,128,0,-1--1--1,,1|(1782,-43)|
+10,95,"MM DEP % One and Done Appt Rate",2014,109,94,70,8,130,0,3,-1,0,0,0,128-128-128,0-0-0,|12||128-128-128
+1,96,95,93,0,0,0,0,0,128,0,-1--1--1,,1|(1904,55)|
+1,97,95,29,1,0,0,0,0,128,0,-1--1--1,,1|(2074,-33)|
+10,98,MM DEP time to first appt,1556,1,78,26,8,3,0,2,0,0,0,0,-1--1--1,0-0-0,|12||255-0-0
+1,99,98,93,1,0,0,0,0,128,0,-1--1--1,,1|(1662,19)|
+10,100,Expected New MM DEP Patient Rate,953,-266,89,26,8,3,0,2,0,0,0,0,-1--1--1,0-0-0,|12||255-0-0
+1,101,60,31,0,0,0,0,0,128,0,-1--1--1,,1|(1845,-895)|
+1,102,100,25,1,0,0,0,0,128,0,-1--1--1,,1|(1026,-187)|
+10,103,Expected New MM DEP Patient Rate,1469,-838,95,26,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|12||128-128-128
+1,104,103,30,1,0,0,0,0,128,0,-1--1--1,,1|(1469,-909)|
+10,105,MM DEP Patients Completed,2164,-107,77,57,3,131,0,0,0,0,0,0
+10,106,MM AUD Appts Scheduled,617,635,90,48,3,131,0,0,0,0,0,0
+12,107,48,176,622,10,8,0,3,0,0,-1,0,0,0
+1,108,110,106,4,0,0,22,0,0,0,-1--1--1,,1|(434,617)|
+1,109,110,107,100,0,0,22,0,0,0,-1--1--1,,1|(255,617)|
+11,110,48,333,617,8,10,34,3,0,0,1,0,0,0
+10,111,MM AUD Scheduling Rate,333,653,77,26,40,3,0,0,-1,0,0,0
+1,112,114,143,4,0,0,22,0,0,0,-1--1--1,,1|(965,627)|
+1,113,114,106,100,0,0,22,0,0,0,-1--1--1,,1|(789,627)|
+11,114,524,880,627,8,10,34,3,0,0,1,0,0,0
+10,115,MM AUD Attendance Rate,880,663,79,26,40,3,0,0,-1,0,0,0
+10,116,MM AUD New Patient Visit Frequency,285,845,103,26,8,3,0,0,0,0,0,0
+1,117,116,111,1,0,0,0,0,128,0,-1--1--1,,1|(283,744)|
+10,118,MM AUD Existing Patient Visit Frequency,412,779,108,26,8,131,0,0,0,0,0,0
+1,119,118,111,1,0,0,0,0,128,0,-1--1--1,,1|(348,729)|
+10,120,MM AUD Patients,1788,1182,79,50,3,131,0,0,0,0,0,0
+10,121,MM AUD Patients Wating for 1st Visit,1376,1179,81,46,3,131,0,0,0,0,0,0
+1,122,124,120,4,0,0,22,0,0,0,-1--1--1,,1|(1639,1174)|
+1,123,124,121,100,0,0,22,0,0,0,-1--1--1,,1|(1505,1174)|
+11,124,764,1561,1174,8,10,34,3,0,0,1,0,0,0
+10,125,MM AUD Becoming a Patient,1561,1210,91,26,40,3,0,0,-1,0,0,0
+12,126,48,1002,1170,10,8,0,3,0,0,-1,0,0,0
+1,127,129,121,4,0,0,22,0,0,0,-1--1--1,,1|(1221,1172)|
+1,128,129,126,100,0,0,22,0,0,0,-1--1--1,,1|(1072,1172)|
+11,129,48,1140,1172,8,10,34,3,0,0,1,0,0,0
+10,130,MM AUD Scheduling New Patients,1140,1208,97,26,40,3,0,0,-1,0,0,0
+1,131,133,210,4,0,0,22,0,0,0,-1--1--1,,1|(2079,1177)|
+1,132,133,120,100,0,0,22,0,0,0,-1--1--1,,1|(1931,1177)|
+11,133,48,2003,1177,8,10,34,3,0,0,1,0,0,0
+10,134,MM AUD Stopping,2003,1202,43,26,40,3,0,0,-1,0,0,0
+10,135,MM AUD Supply for New Patients,1431,355,93,26,72,131,0,0,0,0,0,0
+10,136,MM AUD Supply Used by All Pts,1738,399,78,26,72,131,0,0,-1,0,0,0
+1,137,136,135,1,0,0,0,0,64,0,-1--1--1,,1|(1562,347)|
+10,138,MM AUD Total Supply,1277,264,69,26,72,131,0,2,-1,0,0,0,-1--1--1,0-0-0,|12||255-0-0
+1,139,138,135,1,0,0,0,0,64,0,-1--1--1,,1|(1342,289)|
+10,140,Avg MM AUD Care Episode,2063,1052,64,26,8,3,0,2,0,0,0,0,-1--1--1,0-0-0,|12||255-0-0
+1,141,140,134,1,0,0,0,0,128,0,-1--1--1,,1|(2047,1117)|
+1,142,120,134,1,0,0,0,0,128,0,-1--1--1,,1|(1885,1137)|
+10,143,MM AUD Appts Attended,1123,633,81,48,3,131,0,0,0,0,0,0
+10,144,"MM AUD No-Shows to Reschedule",615,340,88,51,3,131,0,0,0,0,0,0
+1,145,147,144,4,0,0,22,0,0,0,-1--1--1,,1|(662,439)|
+1,146,147,106,100,0,0,22,0,0,0,-1--1--1,,1|(662,545)|
+11,147,236,662,495,10,8,33,3,0,0,4,0,0,0
+10,148,MM AUD Missed Appt Rate,760,495,79,26,40,131,0,0,-1,0,0,0
+1,149,151,106,4,0,0,22,0,0,0,-1--1--1,,1|(576,544)|
+1,150,151,144,100,0,0,22,0,0,0,-1--1--1,,1|(576,438)|
+11,151,556,576,494,10,8,33,3,0,0,2,0,0,0
+10,152,MM AUD Resheduling Rate,496,494,83,26,40,131,0,0,-1,0,0,0
+10,153,MM AUD Appts Scheduled,1931,277,79,26,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|12||128-128-128
+1,154,153,136,1,0,0,0,0,128,0,-1--1--1,,1|(1835,311)|
+10,155,"Minimum Scheduling Delay - MM AUD",1303,925,97,26,8,3,0,0,0,0,0,0
+10,156,"Maximum Possible Scheduling Rate - MM AUD",1457,1034,104,39,8,3,0,0,0,0,0,0
+1,157,155,156,1,0,0,0,0,128,0,-1--1--1,,1|(1383,959)|
+10,158,MM AUD Scheduling Efficiency,1736,872,97,26,8,131,0,0,0,0,0,0
+10,159,Patients Receving 1st MM AUD Appt,1748,1053,102,26,8,131,0,2,0,0,0,0,-1--1--1,0-0-0,|12||255-0-0
+1,160,158,159,1,0,0,0,0,128,0,-1--1--1,,1|(1738,953)|
+1,161,121,156,1,0,0,0,0,128,0,-1--1--1,,1|(1390,1093)|
+1,162,156,125,1,0,0,0,0,128,0,-1--1--1,,1|(1528,1107)|
+10,163,MM AUD Supply for New Patients,1932,914,99,26,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|12||128-128-128
+1,164,163,159,0,0,0,0,0,128,0,-1--1--1,,1|(1845,979)|
+10,165,"MM AUD No-Shows to Reschedule",1937,509,100,26,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|12||128-128-128
+10,166,MM AUD Return Interval,994,556,78,26,8,3,0,2,0,0,0,0,-1--1--1,0-0-0,|12||255-0-0
+1,167,159,125,1,0,0,0,0,128,0,-1--1--1,,1|(1626,1109)|
+1,168,125,116,1,0,0,0,0,128,0,-1--1--1,,1|(642,1172)|
+10,169,MM AUD Work Pressure,1054,319,71,26,8,131,0,0,0,0,0,0
+1,170,138,169,1,0,0,0,0,128,0,-1--1--1,,1|(1156,254)|
+10,171,Effect of MM AUD WP on Attendance Rate,1217,458,105,26,8,131,0,0,0,0,0,0
+1,172,169,171,1,0,0,0,0,128,0,-1--1--1,,1|(1160,339)|
+1,173,106,115,0,0,0,0,0,128,0,-1--1--1,,1|(747,648)|
+1,174,166,115,1,0,0,0,0,128,0,-1--1--1,,1|(937,597)|
+10,175,Effect of MM AUD WP on Missed Appt Rate,847,280,105,26,8,131,0,0,0,0,0,0
+1,176,169,175,1,0,0,0,0,128,0,-1--1--1,,1|(954,263)|
+1,177,106,148,1,0,0,0,0,128,0,-1--1--1,,1|(685,543)|
+1,178,144,152,1,0,0,0,0,128,0,-1--1--1,,1|(493,348)|
+10,179,"Minimum Scheduling Delay - MM AUD",291,380,103,26,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|12||128-128-128
+1,180,179,152,1,0,0,0,0,128,0,-1--1--1,,1|(365,469)|
+10,181,"MM AUD % Missed Appt Rate",887,410,75,41,8,131,0,2,0,0,0,0,-1--1--1,0-0-0,|12||255-0-0
+1,182,181,148,1,0,0,0,0,128,0,-1--1--1,,1|(786,434)|
+1,183,181,115,1,0,0,0,0,128,0,-1--1--1,,1|(903,554)|
+1,184,106,169,1,0,0,0,0,128,0,-1--1--1,,1|(957,482)|
+1,185,166,148,1,0,0,0,0,128,0,-1--1--1,,1|(844,556)|
+10,186,MM AUD Total Supply,252,533,75,26,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|12||128-128-128
+1,187,186,111,0,0,0,0,0,128,0,-1--1--1,,1|(288,587)|
+1,188,106,111,1,0,0,0,0,128,0,-1--1--1,,1|(450,673)|
+1,189,115,118,1,0,0,0,0,128,0,-1--1--1,,1|(707,767)|
+1,190,171,166,1,0,0,0,0,128,0,-1--1--1,,1|(1121,513)|
+1,191,175,148,1,0,0,0,0,128,0,-1--1--1,,1|(732,355)|
+10,192,"MM AUD % One and Done Appt Rate",648,950,99,26,8,131,0,2,0,0,0,0,-1--1--1,0-0-0,|12||255-0-0
+1,193,192,118,1,0,0,0,0,128,0,-1--1--1,,1|(518,885)|
+10,194,MM AUD One and Down Patients,1791,1432,79,50,3,131,0,0,0,0,0,0
+1,195,197,194,4,0,0,22,0,0,0,-1--1--1,,1|(1790,1348)|
+1,196,197,120,100,0,0,22,0,0,0,-1--1--1,,1|(1790,1265)|
+11,197,588,1790,1307,10,8,33,3,0,0,4,0,0,0
+10,198,MM AUD One and Down Stopping,1889,1307,86,26,40,3,0,0,-1,0,0,0
+1,199,120,198,0,0,0,0,0,128,0,-1--1--1,,1|(1843,1251)|
+10,200,"MM AUD % One and Done Appt Rate",2075,1400,105,26,8,130,0,3,-1,0,0,0,128-128-128,0-0-0,|12||128-128-128
+1,201,200,198,0,0,0,0,0,128,0,-1--1--1,,1|(1988,1357)|
+1,202,200,134,1,0,0,0,0,128,0,-1--1--1,,1|(2135,1258)|
+10,203,MM AUD time to first appt,1617,1292,78,26,8,3,0,2,0,0,0,0,-1--1--1,0-0-0,|12||255-0-0
+1,204,203,198,1,0,0,0,0,128,0,-1--1--1,,1|(1723,1310)|
+10,205,Expected New MM AUD Patient Rate,1014,1025,89,26,8,3,0,2,0,0,0,0,-1--1--1,0-0-0,|12||255-0-0
+1,206,165,136,0,0,0,0,0,128,0,-1--1--1,,1|(1843,457)|
+1,207,205,130,1,0,0,0,0,128,0,-1--1--1,,1|(1087,1104)|
+10,208,Expected New MM AUD Patient Rate,1467,514,95,26,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|12||128-128-128
+1,209,208,135,1,0,0,0,0,128,0,-1--1--1,,1|(1467,443)|
+10,210,MM AUD Patients Completed,2225,1184,77,57,3,131,0,0,0,0,0,0
+10,211,MM OUD Appts Scheduled,575,1992,90,48,3,131,0,0,0,0,0,0
+12,212,48,134,1979,10,8,0,3,0,0,-1,0,0,0
+1,213,215,211,4,0,0,22,0,0,0,-1--1--1,,1|(392,1974)|
+1,214,215,212,100,0,0,22,0,0,0,-1--1--1,,1|(213,1974)|
+11,215,48,291,1974,8,10,34,3,0,0,1,0,0,0
+10,216,MM OUD Scheduling Rate,291,2010,77,26,40,3,0,0,-1,0,0,0
+1,217,219,248,4,0,0,22,0,0,0,-1--1--1,,1|(923,1984)|
+1,218,219,211,100,0,0,22,0,0,0,-1--1--1,,1|(747,1984)|
+11,219,524,838,1984,8,10,34,3,0,0,1,0,0,0
+10,220,MM OUD Attendance Rate,838,2020,79,26,40,3,0,0,-1,0,0,0
+10,221,MM OUD New Patient Visit Frequency,243,2202,108,26,8,3,0,0,0,0,0,0
+1,222,221,216,1,0,0,0,0,128,0,-1--1--1,,1|(241,2101)|
+10,223,MM OUD Existing Patient Visit Frequency,370,2136,108,26,8,131,0,0,0,0,0,0
+1,224,223,216,1,0,0,0,0,128,0,-1--1--1,,1|(306,2086)|
+10,225,MM OUD Patients,1746,2539,79,50,3,131,0,0,0,0,0,0
+10,226,MM OUD Patients Wating for 1st Visit,1334,2536,81,46,3,131,0,0,0,0,0,0
+1,227,229,225,4,0,0,22,0,0,0,-1--1--1,,1|(1597,2531)|
+1,228,229,226,100,0,0,22,0,0,0,-1--1--1,,1|(1463,2531)|
+11,229,764,1519,2531,8,10,34,3,0,0,1,0,0,0
+10,230,MM OUD Becoming a Patient,1519,2567,91,26,40,3,0,0,-1,0,0,0
+12,231,48,960,2527,10,8,0,3,0,0,-1,0,0,0
+1,232,234,226,4,0,0,22,0,0,0,-1--1--1,,1|(1179,2529)|
+1,233,234,231,100,0,0,22,0,0,0,-1--1--1,,1|(1030,2529)|
+11,234,48,1098,2529,8,10,34,3,0,0,1,0,0,0
+10,235,MM OUD Scheduling New Patients,1098,2565,98,26,40,3,0,0,-1,0,0,0
+1,236,238,315,4,0,0,22,0,0,0,-1--1--1,,1|(2037,2534)|
+1,237,238,225,100,0,0,22,0,0,0,-1--1--1,,1|(1889,2534)|
+11,238,48,1961,2534,8,10,34,3,0,0,1,0,0,0
+10,239,MM OUD Stopping,1961,2559,45,26,40,3,0,0,-1,0,0,0
+10,240,MM OUD Supply for New Patients,1389,1712,95,26,72,131,0,0,0,0,0,0
+10,241,MM OUD Supply Used by All Pts,1696,1756,79,26,72,131,0,0,-1,0,0,0
+1,242,241,240,1,0,0,0,0,64,0,-1--1--1,,1|(1520,1704)|
+10,243,MM OUD Total Supply,1235,1621,71,26,72,131,0,2,-1,0,0,0,-1--1--1,0-0-0,|12||255-0-0
+1,244,243,240,1,0,0,0,0,64,0,-1--1--1,,1|(1300,1646)|
+10,245,Avg MM OUD Care Episode,2021,2409,66,26,8,3,0,2,0,0,0,0,-1--1--1,0-0-0,|12||255-0-0
+1,246,245,239,1,0,0,0,0,128,0,-1--1--1,,1|(2005,2474)|
+1,247,225,239,1,0,0,0,0,128,0,-1--1--1,,1|(1843,2494)|
+10,248,MM OUD Appts Attended,1081,1990,81,48,3,131,0,0,0,0,0,0
+10,249,"MM OUD No-Shows to Reschedule",573,1697,88,51,3,131,0,0,0,0,0,0
+1,250,252,249,4,0,0,22,0,0,0,-1--1--1,,1|(620,1796)|
+1,251,252,211,100,0,0,22,0,0,0,-1--1--1,,1|(620,1902)|
+11,252,236,620,1852,10,8,33,3,0,0,4,0,0,0
+10,253,MM OUD Missed Appt Rate,718,1852,81,26,40,131,0,0,-1,0,0,0
+1,254,256,211,4,0,0,22,0,0,0,-1--1--1,,1|(534,1901)|
+1,255,256,249,100,0,0,22,0,0,0,-1--1--1,,1|(534,1795)|
+11,256,556,534,1851,10,8,33,3,0,0,2,0,0,0
+10,257,MM OUD Resheduling Rate,454,1851,83,26,40,131,0,0,-1,0,0,0
+10,258,MM OUD Appts Scheduled,1889,1634,81,26,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|12||128-128-128
+1,259,258,241,1,0,0,0,0,128,0,-1--1--1,,1|(1793,1668)|
+10,260,"Minimum Scheduling Delay - MM OUD",1261,2282,97,26,8,3,0,0,0,0,0,0
+10,261,"Maximum Possible Scheduling Rate - MM OUD",1415,2391,104,39,8,3,0,0,0,0,0,0
+1,262,260,261,1,0,0,0,0,128,0,-1--1--1,,1|(1341,2316)|
+10,263,MM OUD Scheduling Efficiency,1694,2229,99,26,8,131,0,0,0,0,0,0
+10,264,Patients Receving 1st MM OUD Appt,1706,2410,102,26,8,131,0,2,0,0,0,0,-1--1--1,0-0-0,|12||255-0-0
+1,265,263,264,1,0,0,0,0,128,0,-1--1--1,,1|(1696,2310)|
+1,266,226,261,1,0,0,0,0,128,0,-1--1--1,,1|(1348,2450)|
+1,267,261,230,1,0,0,0,0,128,0,-1--1--1,,1|(1486,2464)|
+10,268,MM OUD Supply for New Patients,1890,2271,101,26,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|12||128-128-128
+1,269,268,264,0,0,0,0,0,128,0,-1--1--1,,1|(1803,2336)|
+10,270,"MM OUD No-Shows to Reschedule",1895,1866,102,26,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|12||128-128-128
+10,271,MM OUD Return Interval,952,1913,79,26,8,3,0,2,0,0,0,0,-1--1--1,0-0-0,|12||255-0-0
+1,272,264,230,1,0,0,0,0,128,0,-1--1--1,,1|(1584,2466)|
+1,273,230,221,1,0,0,0,0,128,0,-1--1--1,,1|(600,2529)|
+10,274,MM OUD Work Pressure,1012,1676,72,26,8,131,0,0,0,0,0,0
+1,275,243,274,1,0,0,0,0,128,0,-1--1--1,,1|(1114,1611)|
+10,276,Effect of MM OUD WP on Attendance Rate,1175,1815,107,26,8,131,0,0,0,0,0,0
+1,277,274,276,1,0,0,0,0,128,0,-1--1--1,,1|(1118,1696)|
+1,278,211,220,0,0,0,0,0,128,0,-1--1--1,,1|(705,2005)|
+1,279,271,220,1,0,0,0,0,128,0,-1--1--1,,1|(895,1954)|
+10,280,Effect of MM OUD WP on Missed Appt Rate,805,1637,107,26,8,131,0,0,0,0,0,0
+1,281,274,280,1,0,0,0,0,128,0,-1--1--1,,1|(912,1620)|
+1,282,211,253,1,0,0,0,0,128,0,-1--1--1,,1|(643,1900)|
+1,283,249,257,1,0,0,0,0,128,0,-1--1--1,,1|(451,1705)|
+10,284,"Minimum Scheduling Delay - MM OUD",249,1737,103,26,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|12||128-128-128
+1,285,284,257,1,0,0,0,0,128,0,-1--1--1,,1|(323,1826)|
+10,286,"MM OUD % Missed Appt Rate",851,1763,74,41,8,131,0,2,0,0,0,0,-1--1--1,0-0-0,|12||255-0-0
+1,287,286,253,1,0,0,0,0,128,0,-1--1--1,,1|(745,1786)|
+1,288,286,220,1,0,0,0,0,128,0,-1--1--1,,1|(865,1909)|
+1,289,211,274,1,0,0,0,0,128,0,-1--1--1,,1|(915,1839)|
+1,290,271,253,1,0,0,0,0,128,0,-1--1--1,,1|(802,1913)|
+10,291,MM OUD Total Supply,210,1890,77,26,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|12||128-128-128
+1,292,291,216,0,0,0,0,0,128,0,-1--1--1,,1|(246,1944)|
+1,293,211,216,1,0,0,0,0,128,0,-1--1--1,,1|(408,2030)|
+1,294,220,223,1,0,0,0,0,128,0,-1--1--1,,1|(665,2124)|
+1,295,276,271,1,0,0,0,0,128,0,-1--1--1,,1|(1079,1870)|
+1,296,280,253,1,0,0,0,0,128,0,-1--1--1,,1|(690,1712)|
+10,297,"MM OUD % One and Done Appt Rate",606,2307,100,26,8,131,0,2,0,0,0,0,-1--1--1,0-0-0,|12||255-0-0
+1,298,297,223,1,0,0,0,0,128,0,-1--1--1,,1|(476,2242)|
+10,299,MM OUD One and Down Patients,1749,2789,79,50,3,131,0,0,0,0,0,0
+1,300,302,299,4,0,0,22,0,0,0,-1--1--1,,1|(1748,2705)|
+1,301,302,225,100,0,0,22,0,0,0,-1--1--1,,1|(1748,2622)|
+11,302,588,1748,2664,10,8,33,3,0,0,4,0,0,0
+10,303,MM OUD One and Down Stopping,1847,2664,88,26,40,3,0,0,-1,0,0,0
+1,304,225,303,0,0,0,0,0,128,0,-1--1--1,,1|(1801,2608)|
+10,305,"MM OUD % One and Done Appt Rate",2033,2757,107,26,8,130,0,3,-1,0,0,0,128-128-128,0-0-0,|12||128-128-128
+1,306,305,303,0,0,0,0,0,128,0,-1--1--1,,1|(1946,2714)|
+1,307,305,239,1,0,0,0,0,128,0,-1--1--1,,1|(2093,2615)|
+10,308,MM OUD time to first appt,1575,2649,80,26,8,3,0,2,0,0,0,0,-1--1--1,0-0-0,|12||255-0-0
+1,309,308,303,1,0,0,0,0,128,0,-1--1--1,,1|(1681,2667)|
+10,310,Expected New MM OUD Patient Rate,972,2382,89,26,8,3,0,2,0,0,0,0,-1--1--1,0-0-0,|12||255-0-0
+1,311,270,241,0,0,0,0,0,128,0,-1--1--1,,1|(1801,1814)|
+1,312,310,235,1,0,0,0,0,128,0,-1--1--1,,1|(1045,2461)|
+10,313,Expected New MM OUD Patient Rate,1425,1871,95,26,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|12||128-128-128
+1,314,313,240,1,0,0,0,0,128,0,-1--1--1,,1|(1425,1800)|
+10,315,MM OUD Patients Completed,2183,2541,77,57,3,131,0,0,0,0,0,0
+10,316,MM PTSD Appts Scheduled,604,3513,90,48,3,131,0,0,0,0,0,0
+12,317,48,163,3500,10,8,0,3,0,0,-1,0,0,0
+1,318,320,316,4,0,0,22,0,0,0,-1--1--1,,1|(421,3495)|
+1,319,320,317,100,0,0,22,0,0,0,-1--1--1,,1|(242,3495)|
+11,320,48,320,3495,8,10,34,3,0,0,1,0,0,0
+10,321,MM PTSD Scheduling Rate,320,3531,77,26,40,3,0,0,-1,0,0,0
+1,322,324,353,4,0,0,22,0,0,0,-1--1--1,,1|(952,3505)|
+1,323,324,316,100,0,0,22,0,0,0,-1--1--1,,1|(776,3505)|
+11,324,524,867,3505,8,10,34,3,0,0,1,0,0,0
+10,325,MM PTSD Attendance Rate,867,3541,79,26,40,3,0,0,-1,0,0,0
+10,326,MM PTSD New Patient Visit Frequency,272,3723,108,26,8,3,0,0,0,0,0,0
+1,327,326,321,1,0,0,0,0,128,0,-1--1--1,,1|(270,3622)|
+10,328,MM PTSD Existing Patient Visit Frequency,399,3657,108,26,8,131,0,0,0,0,0,0
+1,329,328,321,1,0,0,0,0,128,0,-1--1--1,,1|(335,3607)|
+10,330,MM PTSD Patients,1775,4060,79,50,3,131,0,0,0,0,0,0
+10,331,MM PTSD Patients Wating for 1st Visit,1363,4057,81,46,3,131,0,0,0,0,0,0
+1,332,334,330,4,0,0,22,0,0,0,-1--1--1,,1|(1626,4052)|
+1,333,334,331,100,0,0,22,0,0,0,-1--1--1,,1|(1492,4052)|
+11,334,764,1548,4052,8,10,34,3,0,0,1,0,0,0
+10,335,MM PTSD Becoming a Patient,1548,4088,91,26,40,3,0,0,-1,0,0,0
+12,336,48,989,4048,10,8,0,3,0,0,-1,0,0,0
+1,337,339,331,4,0,0,22,0,0,0,-1--1--1,,1|(1208,4050)|
+1,338,339,336,100,0,0,22,0,0,0,-1--1--1,,1|(1059,4050)|
+11,339,48,1127,4050,8,10,34,3,0,0,1,0,0,0
+10,340,MM PTSD Scheduling New Patients,1127,4086,75,39,40,3,0,0,-1,0,0,0
+1,341,343,420,4,0,0,22,0,0,0,-1--1--1,,1|(2066,4055)|
+1,342,343,330,100,0,0,22,0,0,0,-1--1--1,,1|(1918,4055)|
+11,343,48,1990,4055,8,10,34,3,0,0,1,0,0,0
+10,344,MM PTSD Stopping,1990,4080,49,26,40,3,0,0,-1,0,0,0
+10,345,MM PTSD Supply for New Patients,1418,3233,99,26,72,131,0,0,0,0,0,0
+10,346,MM PTSD Supply Used by All Pts,1725,3277,83,26,72,131,0,0,-1,0,0,0
+1,347,346,345,1,0,0,0,0,64,0,-1--1--1,,1|(1549,3225)|
+10,348,MM PTSD Total Supply,1264,3142,75,26,72,131,0,2,-1,0,0,0,-1--1--1,0-0-0,|12||255-0-0
+1,349,348,345,1,0,0,0,0,64,0,-1--1--1,,1|(1329,3167)|
+10,350,Avg MM PTSD Care Episode,2050,3930,70,26,8,3,0,2,0,0,0,0,-1--1--1,0-0-0,|12||255-0-0
+1,351,350,344,1,0,0,0,0,128,0,-1--1--1,,1|(2034,3995)|
+1,352,330,344,1,0,0,0,0,128,0,-1--1--1,,1|(1872,4015)|
+10,353,MM PTSD Appts Attended,1110,3511,81,48,3,131,0,0,0,0,0,0
+10,354,"MM PTSD No-Shows to Reschedule",602,3218,88,51,3,131,0,0,0,0,0,0
+1,355,357,354,4,0,0,22,0,0,0,-1--1--1,,1|(649,3317)|
+1,356,357,316,100,0,0,22,0,0,0,-1--1--1,,1|(649,3423)|
+11,357,236,649,3373,10,8,33,3,0,0,4,0,0,0
+10,358,MM PTSD Missed Appt Rate,747,3373,85,26,40,131,0,0,-1,0,0,0
+1,359,361,316,4,0,0,22,0,0,0,-1--1--1,,1|(563,3422)|
+1,360,361,354,100,0,0,22,0,0,0,-1--1--1,,1|(563,3316)|
+11,361,556,563,3372,10,8,33,3,0,0,2,0,0,0
+10,362,MM PTSD Resheduling Rate,483,3372,83,26,40,131,0,0,-1,0,0,0
+10,363,MM PTSD Appts Scheduled,1918,3155,85,26,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|12||128-128-128
+1,364,363,346,1,0,0,0,0,128,0,-1--1--1,,1|(1822,3189)|
+10,365,"Minimum Scheduling Delay - MM PTSD",1290,3803,97,26,8,3,0,0,0,0,0,0
+10,366,"Maximum Possible Scheduling Rate - MM PTSD",1444,3912,104,39,8,3,0,0,0,0,0,0
+1,367,365,366,1,0,0,0,0,128,0,-1--1--1,,1|(1370,3837)|
+10,368,MM PTSD Scheduling Efficiency,1741,3697,99,26,8,131,0,0,0,0,0,0
+10,369,Patients Receving 1st MM PTSD Appt,1735,3931,102,26,8,131,0,2,0,0,0,0,-1--1--1,0-0-0,|12||255-0-0
+1,370,368,369,1,0,0,0,0,128,0,-1--1--1,,1|(1733,3801)|
+1,371,331,366,1,0,0,0,0,128,0,-1--1--1,,1|(1377,3971)|
+1,372,366,335,1,0,0,0,0,128,0,-1--1--1,,1|(1515,3985)|
+10,373,MM PTSD Supply for New Patients,1919,3792,90,26,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|12||128-128-128
+1,374,373,369,0,0,0,0,0,128,0,-1--1--1,,1|(1832,3857)|
+10,375,"MM PTSD No-Shows to Reschedule",1924,3387,61,39,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|12||128-128-128
+10,376,MM PTSD Return Interval,981,3434,83,26,8,3,0,2,0,0,0,0,-1--1--1,0-0-0,|12||255-0-0
+1,377,369,335,1,0,0,0,0,128,0,-1--1--1,,1|(1613,3987)|
+1,378,335,326,1,0,0,0,0,128,0,-1--1--1,,1|(629,4050)|
+10,379,MM PTSD Work Pressure,1041,3197,77,26,8,131,0,0,0,0,0,0
+1,380,348,379,1,0,0,0,0,128,0,-1--1--1,,1|(1143,3132)|
+10,381,Effect of MM PTSD WP on Attendance Rate,1204,3336,111,26,8,131,0,0,0,0,0,0
+1,382,379,381,1,0,0,0,0,128,0,-1--1--1,,1|(1147,3217)|
+1,383,316,325,0,0,0,0,0,128,0,-1--1--1,,1|(734,3526)|
+1,384,376,325,1,0,0,0,0,128,0,-1--1--1,,1|(924,3475)|
+10,385,Effect of MM PTSD WP on Missed Appt Rate,834,3158,111,26,8,131,0,0,0,0,0,0
+1,386,379,385,1,0,0,0,0,128,0,-1--1--1,,1|(941,3141)|
+1,387,316,358,1,0,0,0,0,128,0,-1--1--1,,1|(672,3421)|
+1,388,354,362,1,0,0,0,0,128,0,-1--1--1,,1|(480,3226)|
+10,389,"Minimum Scheduling Delay - MM PTSD",278,3258,103,26,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|12||128-128-128
+1,390,389,362,1,0,0,0,0,128,0,-1--1--1,,1|(352,3347)|
+10,391,"MM PTSD % Missed Appt Rate",880,3284,83,26,8,131,0,2,0,0,0,0,-1--1--1,0-0-0,|12||255-0-0
+1,392,391,358,1,0,0,0,0,128,0,-1--1--1,,1|(774,3307)|
+1,393,391,325,1,0,0,0,0,128,0,-1--1--1,,1|(894,3430)|
+1,394,316,379,1,0,0,0,0,128,0,-1--1--1,,1|(944,3360)|
+1,395,376,358,1,0,0,0,0,128,0,-1--1--1,,1|(831,3434)|
+10,396,MM PTSD Total Supply,239,3411,81,26,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|12||128-128-128
+1,397,396,321,0,0,0,0,0,128,0,-1--1--1,,1|(275,3465)|
+1,398,316,321,1,0,0,0,0,128,0,-1--1--1,,1|(437,3551)|
+1,399,325,328,1,0,0,0,0,128,0,-1--1--1,,1|(694,3645)|
+1,400,381,376,1,0,0,0,0,128,0,-1--1--1,,1|(1108,3391)|
+1,401,385,358,1,0,0,0,0,128,0,-1--1--1,,1|(719,3233)|
+10,402,"MM PTSD % One and Done Appt Rate",635,3828,95,26,8,131,0,2,0,0,0,0,-1--1--1,0-0-0,|12||255-0-0
+1,403,402,328,1,0,0,0,0,128,0,-1--1--1,,1|(505,3763)|
+10,404,MM PTSD One and Down Patients,1778,4310,79,50,3,131,0,0,0,0,0,0
+1,405,407,404,4,0,0,22,0,0,0,-1--1--1,,1|(1777,4226)|
+1,406,407,330,100,0,0,22,0,0,0,-1--1--1,,1|(1777,4143)|
+11,407,588,1777,4185,10,8,33,3,0,0,4,0,0,0
+10,408,MM PTSD One and Down Stopping,1876,4185,92,26,40,3,0,0,-1,0,0,0
+1,409,330,408,0,0,0,0,0,128,0,-1--1--1,,1|(1830,4129)|
+10,410,"MM PTSD % One and Done Appt Rate",2062,4278,102,26,8,130,0,3,-1,0,0,0,128-128-128,0-0-0,|12||128-128-128
+1,411,410,408,0,0,0,0,0,128,0,-1--1--1,,1|(1975,4235)|
+1,412,410,344,1,0,0,0,0,128,0,-1--1--1,,1|(2122,4136)|
+10,413,MM PTSD time to first appt,1604,4170,84,26,8,3,0,2,0,0,0,0,-1--1--1,0-0-0,|12||255-0-0
+1,414,413,408,1,0,0,0,0,128,0,-1--1--1,,1|(1710,4188)|
+10,415,Expected New MM PTSD Patient Rate,1001,3903,89,26,8,3,0,2,0,0,0,0,-1--1--1,0-0-0,|12||255-0-0
+1,416,375,346,0,0,0,0,0,128,0,-1--1--1,,1|(1823,3331)|
+1,417,415,340,1,0,0,0,0,128,0,-1--1--1,,1|(1074,3982)|
+10,418,Expected New MM PTSD Patient Rate,1454,3392,95,26,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|12||128-128-128
+1,419,418,345,1,0,0,0,0,128,0,-1--1--1,,1|(1454,3321)|
+10,420,MM PTSD Patients Completed,2212,4062,77,57,3,131,0,0,0,0,0,0
+10,421,MM DEP 84 Day Assessment Period SAIL,1412,-671,78,63,8,131,0,0,0,0,0,0
+10,422,MM DEP 180 Day Assessment Period SAIL,1735,-690,85,54,8,131,0,0,0,0,0,0
+10,423,Pts per Appt,1599,-396,50,36,8,131,0,0,0,0,0,0
+1,424,423,54,1,0,0,0,0,128,0,-1--1--1,,1|(1689,-342)|
+10,425,MM DEP 84 Day SAIL Metric,1176,-537,79,26,8,3,0,0,0,0,0,0
+1,426,421,425,1,0,0,0,0,128,0,-1--1--1,,1|(1309,-558)|
+1,427,15,425,1,0,0,0,0,128,0,-1--1--1,,1|(1459,-451)|
+10,428,MM DEP 180 Day SAIL Metric,1550,-563,84,26,8,3,0,0,0,0,0,0
+1,429,422,428,1,0,0,0,0,128,0,-1--1--1,,1|(1648,-598)|
+1,430,15,428,1,0,0,0,0,128,0,-1--1--1,,1|(1691,-358)|
+1,431,10,428,1,0,0,0,0,128,0,-1--1--1,,1|(1206,-629)|
+10,432,Pts per Appt,1509,822,71,13,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|0||128-128-128
+1,433,432,159,1,0,0,0,0,128,0,-1--1--1,,1|(1598,947)|
+10,434,Pts per Appt,1489,2235,71,13,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|0||128-128-128
+1,435,434,264,1,0,0,0,0,128,0,-1--1--1,,1|(1572,2338)|
+10,436,Pts per Appt,1555,3774,71,13,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|0||128-128-128
+1,437,436,369,0,0,0,0,0,128,0,-1--1--1,,1|(1631,3841)|
+1,438,10,425,0,0,0,0,0,128,0,-1--1--1,,1|(1022,-617)|
+10,439,Expected Appt per Patient per 84 Day Assess Period,961,-429,108,55,8,131,0,0,0,0,0,0
+1,440,439,425,0,0,0,0,0,128,0,-1--1--1,,1|(1090,-494)|
+10,441,Expected Appt per Patient per 180 Day Assess Period,1935,-603,127,26,8,3,0,0,0,0,0,0
+1,442,441,428,0,0,0,0,0,128,0,-1--1--1,,1|(1727,-582)|
+///---\\\
+:L<%^E!@
+1:Basecase3.vdf
+1:Basecase2.vdf
+1:User.vdf
+1:Basecase.vdf
+9:Basecase3
+15:0,0,0,0,0,0
+19:70,0
+27:2,
+34:0,
+4:Time
+5:Expected Appt per Patient per 180 Day Assess Period
+35:Date
+36:YYYY-MM-DD
+37:2016
+38:1
+39:1
+40:3
+41:0
+42:1
+24:0
+25:260
+26:260
