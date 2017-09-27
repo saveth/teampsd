@@ -1,0 +1,166 @@
+{UTF-8}
+EBP Implementation Goal  = A FUNCTION OF( )
+	~	
+	~		|
+
+EBP Implementation Rate  = A FUNCTION OF( EBP Implemention Gap,Resources for EBP Implementation\
+		) ~~|
+EBP Implementation Rate=
+	~	
+	~		|
+
+EBP Implementation Success=A FUNCTION OF(EBP Implementation Success,EBP Implementation Rate\
+		) ~~|
+EBP Implementation Success=
+	~	
+	~		|
+
+EBP Implemention Gap  = A FUNCTION OF( EBP Implementation Goal,EBP Implementation Success\
+		,Stakeholder Engagement) ~~|
+EBP Implemention Gap=
+	~	
+	~		|
+
+EBP Scale Up Goal  = A FUNCTION OF( )
+	~	
+	~		|
+
+Scale Up Achieved  = A FUNCTION OF( Scale Up Rate)
+	~	
+	~		|
+
+Resources for EBP Implementation  = A FUNCTION OF( )
+	~	
+	~		|
+
+Scale Up Rate=A FUNCTION OF(Scale Up Rate,Resources for Scale Up,Scale Up Gap) ~~|
+Scale Up Rate=
+	~	
+	~		|
+
+Stakeholder Engagement  = A FUNCTION OF( EBP Implementation Success,Effective SD workshop facilitation\
+		,Understanding,Useful System Dynamics Models) ~~|
+Stakeholder Engagement=
+	~	
+	~		|
+
+Scale Up Gap  = A FUNCTION OF( EBP Implementation Rate,EBP Scale Up Goal,Scale Up Achieved\
+		) ~~|
+Scale Up Gap=
+	~	
+	~		|
+
+Useful Performance Data  = A FUNCTION OF( Stakeholder Engagement,Scale Up Rate) ~~|
+Useful Performance Data:INTERPOLATE:
+	~	
+	~		|
+
+Effective SD workshop facilitation=A FUNCTION OF(Effective SD workshop facilitation) ~~|
+Effective SD workshop facilitation=
+	~	
+	~		|
+
+Resources for Scale Up  = A FUNCTION OF( )
+	~	
+	~		|
+
+Understanding  = A FUNCTION OF( Useful System Dynamics Models)
+	~	
+	~		|
+
+Useful System Dynamics Models=A FUNCTION OF(Useful System Dynamics Models,Stakeholder Engagement\
+		,Useful Performance Data) ~~|
+Useful System Dynamics Models=
+	~	
+	~		|
+
+********************************************************
+	.Control
+********************************************************~
+		Simulation Control Parameters
+	|
+
+FINAL TIME  = 100
+	~	Month
+	~	The final time for the simulation.
+	|
+
+INITIAL TIME  = 0
+	~	Month
+	~	The initial time for the simulation.
+	|
+
+SAVEPER  = 
+        TIME STEP
+	~	Month [0,?]
+	~	The frequency with which output is stored.
+	|
+
+TIME STEP  = 1
+	~	Month [0,?]
+	~	The time step for the simulation.
+	|
+
+\\\---/// Sketch information - do not modify anything except names
+V300  Do not put anything below this section - it will be ignored
+*View 1
+$192-192-192,0,Meiryo|12||0-0-0|0-0-0|0-0-255|-1--1--1|-1--1--1|120,120,120,0
+10,1,Useful System Dynamics Models,1220,164,89,30,8,131,0,0,0,0,0,0
+10,2,Stakeholder Engagement,1006,424,65,30,8,131,0,0,0,0,0,0
+10,3,Understanding,1363,432,74,28,8,131,0,0,0,0,0,0
+10,4,EBP Implemention Gap,925,701,96,30,8,131,0,0,0,0,0,0
+10,5,Useful Performance Data,907,120,94,30,8,131,0,0,0,0,0,0
+1,6,5,1,1,0,43,13,2,192,0,-1--1--1,|12||0-0-0,1|(1049,118)|
+1,7,1,2,1,0,43,13,2,192,0,-1--1--1,|12||0-0-0,1|(1198,357)|
+1,8,2,1,1,0,43,13,2,192,0,-1--1--1,|12||0-0-0,1|(1065,261)|
+1,9,1,3,1,0,43,13,2,192,0,-1--1--1,|12||0-0-0,1|(1282,222)|
+1,10,3,2,1,0,43,13,2,192,0,-1--1--1,|12||0-0-0,1|(1184,489)|
+10,11,Scale Up Gap,463,461,70,15,8,131,0,0,0,0,0,0
+10,12,Effective SD workshop facilitation,811,281,94,42,8,131,0,0,0,0,0,0
+10,13,Resources for Scale Up,300,245,71,30,8,3,0,0,0,0,0,0
+1,14,12,2,1,0,43,13,2,192,0,-1--1--1,|12||0-0-0,1|(895,349)|
+10,15,EBP Implementation Rate,636,646,105,30,8,131,0,0,0,0,0,0
+1,16,4,15,1,0,43,13,2,192,0,-1--1--1,|12||0-0-0,1|(759,701)|
+1,17,15,11,1,0,45,13,2,192,0,-1--1--1,|12||0-0-0,1|(491,566)|
+10,18,Scale Up Rate,525,202,73,15,8,3,0,0,0,0,0,0
+1,19,11,18,1,0,43,13,2,192,0,-1--1--1,|12||0-0-0,1|(428,328)|
+1,20,2,4,1,0,45,13,2,192,0,-1--1--1,|12||0-0-0,1|(999,570)|
+12,21,0,1139,307,25,25,4,7,0,0,-1,0,0,0
+R1
+12,22,0,1270,371,25,25,4,7,0,0,-1,0,0,0
+R2
+12,23,0,738,179,25,25,4,7,0,0,-1,0,0,0
+R3
+1,24,18,5,1,0,43,13,2,192,0,-1--1--1,|12||0-0-0,1|(664,127)|
+1,25,2,5,1,0,43,13,2,192,0,-1--1--1,|12||0-0-0,1|(918,235)|
+1,26,13,18,1,0,43,13,2,128,0,-1--1--1,|12||0-0-0,1|(410,199)|
+10,27,EBP Implementation Goal,1020,819,105,30,8,3,0,0,0,0,0,0
+1,28,27,4,1,0,43,13,2,192,0,-1--1--1,|12||0-0-0,1|(955,770)|
+10,29,EBP Implementation Success,764,465,105,30,8,131,0,0,0,0,0,0
+1,30,15,29,1,0,43,13,2,192,0,-1--1--1,|12||0-0-0,1|(674,517)|
+1,31,29,2,1,0,43,13,2,192,0,-1--1--1,|12||0-0-0,1|(868,429)|
+10,32,Scale Up Achieved,681,357,47,30,8,3,0,0,0,0,0,0
+1,33,18,32,1,0,43,13,2,192,0,-1--1--1,|12||0-0-0,1|(646,230)|
+1,34,32,11,1,0,45,13,2,192,0,-1--1--1,|12||0-0-0,1|(606,427)|
+1,35,29,4,1,0,45,13,2,192,0,-1--1--1,|12||0-0-0,1|(884,562)|
+10,36,EBP Scale Up Goal,312,536,69,30,8,3,0,0,0,0,0,0
+1,37,36,11,1,0,43,13,2,128,0,-1--1--1,|12||0-0-0,1|(379,476)|
+10,38,Resources for EBP Implementation,529,769,94,30,8,3,0,0,0,0,0,0
+1,39,38,15,1,0,43,13,2,192,0,-1--1--1,|12||0-0-0,1|(564,704)|
+12,40,0,761,582,25,25,4,7,0,0,-1,0,0,0
+B1
+12,41,0,941,545,25,25,4,7,0,0,-1,0,0,0
+B2
+12,42,0,531,325,25,25,4,7,0,0,-1,0,0,0
+B3
+///---\\\
+:L<%^E!@
+9:Current
+15:0,0,0,0,0,0
+19:120,0
+27:2,
+34:0,
+5:Effective SD workshop facilitation
+24:0
+25:0
+26:0
