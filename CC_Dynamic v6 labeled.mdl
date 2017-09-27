@@ -1,0 +1,399 @@
+{UTF-8}
+CC Scheduling New Patients=
+	Effect of Team Perception of CC Availability on Scheduling New Patients*Expected New CC Patient Rate
+	~	Patients/Week
+	~		|
+
+Prop New Visit Freq=
+	CC New Patient Visit Frequency/(CC Existing Patient Visit Frequency+CC New Patient Visit Frequency\
+		)
+	~	dmnl
+	~		|
+
+Patients Receiving 1st CC Appt=
+	(CC Scheduling Efficiency*CC Supply for New Patients*Pts per Appt)/"Minimum Scheduling Delay - CC"
+	~	Patients/Week
+	~		|
+
+CC Supply for New Patients=
+	MAX((CC Total Supply-CC Supply Used by All Pts),0)
+	~	Appts
+	~		|
+
+CC Scheduling Efficiency=
+	1
+	~	dmnl
+	~	The percent of open slots actually used for new patients.
+	|
+
+Team Perception of CC Availability=
+	CC Patients/CC Patients Waiting for 1st Visit
+	~	dmnl
+	~		|
+
+CC New Patient Visit Frequency=
+	CC Becoming a Patient/Pts per Appt
+	~	Appts/Week
+	~		|
+
+Effect of Team Perception of CC Availability on Scheduling New Patients= WITH LOOKUP \
+		(
+	Team Perception of CC Availability,
+		([(0,0)-(1,2)],(0,1),(1,2) ))
+	~	dmnl
+	~		|
+
+RVI=
+	GET DIRECT CONSTANTS('ModelParameters.xlsx','CCParams','B5')
+	~	Week
+	~		|
+
+Pts per Appt=
+	1
+	~	Patients/Appts
+	~		|
+
+CC Supply Used by All Pts=
+	CC Appts Scheduled+"CC No-Shows to Reschedule"
+	~	Appts
+	~		|
+
+Work Pressure=
+	CC Appts Scheduled/CC Total Supply
+	~	dmnl
+	~		|
+
+Expected New CC Patient Rate=
+	GET DIRECT CONSTANTS('ModelParameters.xlsx','CCParams','B1')
+	~	Patients/Week
+	~		|
+
+CC time to first appt=
+	GET DIRECT CONSTANTS('ModelParameters.xlsx','CCParams','B7')
+	~	Week
+	~		|
+
+CC One and Done Stopping=
+	(CC Patients*"% One and Done Appt Rate")/CC time to first appt
+	~	Patients/Week
+	~		|
+
+CC Becoming a Patient=
+	MIN("Maximum Possible Scheduling Rate - CC",Patients Receiving 1st CC Appt)
+	~	Patients/Week
+	~		|
+
+CC Appts Scheduled= INTEG (
+	+CC Scheduling Rate-CC Attendance Rate-CC Missed Appt Rate+CC Resheduling Rate,
+		1)
+	~	Appts
+	~		|
+
+CC One and Done Patients= INTEG (
+	+CC One and Done Stopping,
+		0)
+	~	Patients
+	~		|
+
+CC Patients= INTEG (
+	+CC Becoming a Patient-CC Stopping-CC One and Done Stopping,
+		0)
+	~	Patients
+	~		|
+
+CC Attendance Rate=
+	(CC Appts Scheduled*(1-"% Missed Appt Rate"))/CC Return Interval
+	~	Appts/Week
+	~		|
+
+CC Stopping=
+	(CC Patients*(1-"% One and Done Appt Rate"))/Avg CC Care Episode
+	~	Patients/Week
+	~		|
+
+CC Existing Patient Visit Frequency=
+	CC Attendance Rate*"% One and Done Appt Rate"
+	~	Appts/Week
+	~		|
+
+"% One and Done Appt Rate"=
+	GET DIRECT CONSTANTS('ModelParameters.xlsx','CCParams','B2')
+	~	dmnl
+	~		|
+
+"% Missed Appt Rate"=
+	GET DIRECT CONSTANTS('ModelParameters.xlsx','CCParams','B3')
+	~	dmnl
+	~		|
+
+Avg CC Care Episode=
+	GET DIRECT CONSTANTS('ModelParameters.xlsx','CCParams','B12')
+	~	Week
+	~		|
+
+CC Appts Attended= INTEG (
+	CC Attendance Rate,
+		0)
+	~	Appts
+	~		|
+
+CC Missed Appt Rate=
+	(CC Appts Scheduled*"% Missed Appt Rate")/(CC Return Interval/Effect of WP on Missed Appt Rate\
+		)
+	~	Appts/Week
+	~		|
+
+"CC No-Shows to Reschedule"= INTEG (
+	CC Missed Appt Rate-CC Resheduling Rate,
+		0)
+	~	Appts
+	~		|
+
+CC Patients Waiting for 1st Visit= INTEG (
+	+CC Scheduling New Patients+CC Becoming a Patient,
+		1)
+	~	Patients
+	~		|
+
+CC Resheduling Rate=
+	"CC No-Shows to Reschedule"/"Minimum Scheduling Delay - CC"
+	~	Appts/Week
+	~		|
+
+CC Return Interval=
+	RVI/Effect of WP on Attendance Rate
+	~	Week
+	~		|
+
+CC Total Supply=
+	GET DIRECT CONSTANTS('ModelParameters.xlsx','CCParams','B10')
+	~	Appts
+	~		|
+
+CC Scheduling Rate=
+	IF THEN ELSE(CC Appts Scheduled<=CC Total Supply, (CC New Patient Visit Frequency+CC Existing Patient Visit Frequency\
+		) , 0 )
+	~	Appts/Week
+	~		|
+
+Effect of WP on Missed Appt Rate= WITH LOOKUP (
+	Work Pressure,
+		([(0,1)-(1,10)],(0,10),(0.24159,9.32895),(0.510703,8.26316),(0.801223,4.86842),(1,1\
+		) ))
+	~	dmnl
+	~		|
+
+Effect of WP on Attendance Rate= WITH LOOKUP (
+	Work Pressure,
+		([(0,1)-(1,10)],(0,1),(0.0458716,6.05263),(0.0948012,7.98246),(0.134557,8.90351),(0.262997\
+		,9.25439),(0.33945,9.42982),(0.547401,9.60526),(1,10) ))
+	~	dmnl
+	~		|
+
+"Minimum Scheduling Delay - CC"=
+	1
+	~	Week
+	~		|
+
+"Maximum Possible Scheduling Rate - CC"=
+	CC Patients Waiting for 1st Visit/"Minimum Scheduling Delay - CC"
+	~	Patients/Week
+	~		|
+
+********************************************************
+	.Control
+********************************************************~
+		Simulation Control Parameters
+	|
+
+FINAL TIME  = 260
+	~	Week
+	~	The final time for the simulation.
+	|
+
+INITIAL TIME  = 0
+	~	Week
+	~	The initial time for the simulation.
+	|
+
+SAVEPER  = 1
+	~	Week [0,?]
+	~	The frequency with which output is stored.
+	|
+
+TIME STEP  = 0.03125
+	~	Week [0,?]
+	~	The time step for the simulation.
+	|
+
+\\\---/// Sketch information - do not modify anything except names
+V300  Do not put anything below this section - it will be ignored
+*View 1
+$192-192-192,0,@Arial Unicode MS|12||0-0-0|0-0-0|0-0-255|-1--1--1|-1--1--1|120,120,70,0
+10,1,CC Appts Scheduled,265,487,90,48,3,131,0,0,0,0,0,0
+12,2,48,-175,473,10,8,0,3,0,0,-1,0,0,0
+1,3,5,1,4,0,0,22,0,0,0,-1--1--1,,1|(82,468)|
+1,4,5,2,100,0,0,22,0,0,0,-1--1--1,,1|(-96,468)|
+11,5,48,-19,468,8,10,34,3,0,0,1,0,0,0
+10,6,CC Scheduling Rate,-19,504,71,26,40,3,0,0,-1,0,0,0
+1,7,9,39,4,0,0,22,0,0,0,-1--1--1,,1|(613,478)|
+1,8,9,1,100,0,0,22,0,0,0,-1--1--1,,1|(437,478)|
+11,9,652,528,478,8,10,34,3,0,0,1,0,0,0
+10,10,CC Attendance Rate,528,514,73,26,40,3,0,0,-1,0,0,0
+10,11,CC New Patient Visit Frequency,82,882,75,26,8,3,0,0,0,0,0,0
+1,12,11,6,1,0,0,0,0,128,0,-1--1--1,,1|(-67,722)|
+10,13,CC Existing Patient Visit Frequency,88,686,75,44,8,131,0,0,0,0,0,0
+1,14,13,6,1,0,0,0,0,128,0,-1--1--1,,1|(2,605)|
+10,15,CC Patients,1116,924,79,50,3,131,0,0,0,0,0,0
+10,16,CC Patients Waiting for 1st Visit,705,921,81,46,3,131,0,0,0,0,0,0
+1,17,19,15,4,0,0,22,0,0,0,-1--1--1,,1|(965,916)|
+1,18,19,16,100,0,0,22,0,0,0,-1--1--1,,1|(831,916)|
+11,19,460,885,916,8,10,34,3,0,0,1,0,0,0
+10,20,CC Becoming a Patient,885,952,74,26,40,3,0,0,-1,0,0,0
+12,21,48,330,913,10,8,0,3,0,0,-1,0,0,0
+1,22,24,16,4,0,0,22,0,0,0,-1--1--1,,1|(550,914)|
+1,23,24,21,100,0,0,22,0,0,0,-1--1--1,,1|(400,914)|
+11,24,48,468,914,8,10,34,3,0,0,1,0,0,0
+10,25,CC Scheduling New Patients,468,950,89,26,40,3,0,0,-1,0,0,0
+12,26,48,1440,916,10,8,0,3,0,0,-1,0,0,0
+1,27,29,26,4,0,0,22,0,0,0,-1--1--1,,1|(1384,919)|
+1,28,29,15,100,0,0,22,0,0,0,-1--1--1,,1|(1259,919)|
+11,29,48,1331,919,8,10,34,3,0,0,1,0,0,0
+10,30,CC Stopping,1331,944,60,15,40,3,0,0,-1,0,0,0
+10,31,CC Supply for New Patients,1057,211,66,26,72,131,0,0,0,0,0,0
+10,32,CC Supply Used by All Pts,1300,250,79,26,72,131,0,0,-1,0,0,0
+1,33,32,31,1,0,45,0,2,64,0,-1--1--1,|12||0-0-0,1|(1160,210)|
+10,34,CC Total Supply,925,115,43,26,72,131,0,2,-1,0,0,0,-1--1--1,0-0-0,|12||255-0-0
+1,35,34,31,1,0,0,0,0,64,0,-1--1--1,,1|(981,144)|
+10,36,Avg CC Care Episode,1391,794,63,26,8,3,0,2,0,0,0,0,-1--1--1,0-0-0,|12||255-0-0
+1,37,36,30,1,0,0,0,0,128,0,-1--1--1,,1|(1375,859)|
+1,38,15,30,1,0,0,0,0,128,0,-1--1--1,,1|(1213,879)|
+10,39,CC Appts Attended,771,484,81,48,3,131,0,0,0,0,0,0
+10,40,"CC No-Shows to Reschedule",263,192,88,51,3,131,0,0,0,0,0,0
+1,41,43,40,4,0,0,22,0,0,0,-1--1--1,,1|(310,291)|
+1,42,43,1,100,0,0,22,0,0,0,-1--1--1,,1|(310,397)|
+11,43,540,310,347,10,8,33,3,0,0,4,0,0,0
+10,44,CC Missed Appt Rate,381,347,61,36,40,131,0,0,-1,0,0,0
+1,45,47,1,4,0,0,22,0,0,0,-1--1--1,,1|(225,396)|
+1,46,47,40,100,0,0,22,0,0,0,-1--1--1,,1|(225,290)|
+11,47,684,225,345,10,8,33,3,0,0,2,0,0,0
+10,48,CC Resheduling Rate,145,345,70,35,40,131,0,0,-1,0,0,0
+10,49,CC Appts Scheduled,1384,141,56,26,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|12||128-128-128
+1,50,49,32,1,0,0,0,0,128,0,-1--1--1,,1|(1341,184)|
+10,51,"Minimum Scheduling Delay - CC",859,660,103,26,8,3,0,2,0,0,0,0,-1--1--1,0-0-0,|12||255-0-255
+10,52,"Maximum Possible Scheduling Rate - CC",802,780,113,39,8,3,0,0,0,0,0,0
+1,53,51,52,1,0,0,0,0,128,0,-1--1--1,,1|(842,717)|
+10,54,CC Scheduling Efficiency,1119,611,99,39,8,131,0,2,0,0,0,0,-1--1--1,0-0-0,|12||255-0-255
+10,55,Patients Receiving 1st CC Appt,1119,798,73,43,8,131,0,0,0,0,0,0
+1,56,54,55,1,0,0,0,0,128,0,-1--1--1,,1|(1115,694)|
+1,57,16,52,1,0,0,0,0,128,0,-1--1--1,,1|(726,833)|
+1,58,52,20,1,0,0,0,0,128,0,-1--1--1,,1|(860,853)|
+10,59,CC Supply for New Patients,1304,652,71,26,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|12||128-128-128
+1,60,59,55,0,0,0,0,0,128,0,-1--1--1,,1|(1228,712)|
+10,61,"CC No-Shows to Reschedule",1399,357,85,26,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|12||128-128-128
+10,62,CC Return Interval,660,402,51,26,8,3,0,0,0,0,0,0
+1,63,55,20,1,0,0,0,0,128,0,-1--1--1,,1|(970,840)|
+10,64,Work Pressure,695,140,56,26,8,3,0,0,0,0,0,0
+1,65,34,64,1,0,0,0,0,128,0,-1--1--1,,1|(805,105)|
+10,66,Effect of WP on Attendance Rate,892,314,85,46,8,131,0,2,0,0,0,0,-1--1--1,0-0-0,|12||0-128-0
+1,67,64,66,1,0,0,0,0,128,0,-1--1--1,,1|(825,184)|
+1,68,1,10,0,0,0,0,0,128,0,-1--1--1,,1|(398,500)|
+1,69,62,10,1,0,0,0,0,128,0,-1--1--1,,1|(593,443)|
+10,70,Effect of WP on Missed Appt Rate,487,152,83,39,8,131,0,2,0,0,0,0,-1--1--1,0-0-0,|12||0-128-0
+1,71,64,70,1,0,45,0,2,128,0,-1--1--1,|12||0-0-0,1|(595,122)|
+1,72,1,44,1,0,0,0,0,128,0,-1--1--1,,1|(333,394)|
+1,73,40,48,1,0,0,0,0,128,0,-1--1--1,,1|(141,199)|
+10,74,"Minimum Scheduling Delay - CC",-60,232,103,26,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|12||128-128-128
+1,75,74,48,1,0,0,0,0,128,0,-1--1--1,,1|(13,320)|
+10,76,"% Missed Appt Rate",545,343,70,26,8,3,0,2,0,0,0,0,-1--1--1,0-0-0,|12||255-0-0
+1,77,76,44,1,0,0,0,0,128,0,-1--1--1,,1|(453,326)|
+1,78,76,10,1,0,0,0,0,128,0,-1--1--1,,1|(545,445)|
+1,79,1,64,1,0,0,0,0,128,0,-1--1--1,,1|(623,351)|
+1,80,62,44,1,0,0,0,0,128,0,-1--1--1,,1|(500,410)|
+10,81,CC Total Supply,-100,384,49,26,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|12||128-128-128
+1,82,81,6,0,0,0,0,0,128,0,-1--1--1,,1|(-63,438)|
+1,83,1,6,1,0,45,0,2,64,0,-1--1--1,|12||0-0-0,1|(109,608)|
+1,84,10,13,1,0,0,0,0,128,0,-1--1--1,,1|(374,636)|
+1,85,66,62,1,0,45,0,2,64,0,-1--1--1,|12||0-0-0,1|(791,365)|
+1,86,70,44,1,0,0,0,2,128,0,-1--1--1,|12||0-0-0,1|(387,222)|
+10,87,"% One and Done Appt Rate",402,707,81,26,8,3,0,2,0,0,0,0,-1--1--1,0-0-0,|12||255-0-0
+1,88,87,13,1,0,0,0,0,128,0,-1--1--1,,1|(255,747)|
+10,89,CC One and Done Patients,1120,1174,79,50,3,131,0,0,0,0,0,0
+1,90,92,89,4,0,0,22,0,0,0,-1--1--1,,1|(1118,1090)|
+1,91,92,15,100,0,0,22,0,0,0,-1--1--1,,1|(1118,1007)|
+11,92,716,1118,1049,10,8,33,3,0,0,4,0,0,0
+10,93,CC One and Done Stopping,1217,1049,89,26,40,3,0,0,-1,0,0,0
+1,94,15,93,0,0,0,0,0,128,0,-1--1--1,,1|(1171,993)|
+10,95,"% One and Done Appt Rate",1430,1098,94,70,8,130,0,3,-1,0,0,0,128-128-128,0-0-0,|12||128-128-128
+1,96,95,93,1,0,0,0,0,128,0,-1--1--1,,1|(1298,1097)|
+1,97,95,30,1,0,0,0,0,128,0,-1--1--1,,1|(1440,973)|
+10,98,CC time to first appt,1298,1153,68,26,8,3,0,2,0,0,0,0,-1--1--1,0-0-0,|12||255-0-0
+1,99,98,93,1,0,0,0,0,128,0,-1--1--1,,1|(1238,1106)|
+10,100,Expected New CC Patient Rate,155,1021,93,26,8,3,0,2,0,0,0,0,-1--1--1,0-0-0,|12||255-0-0
+1,101,61,32,0,0,0,0,0,128,0,-1--1--1,,1|(1354,308)|
+10,102,Pts per Appt,976,572,58,14,8,3,0,0,0,0,0,0
+1,103,102,55,1,0,0,0,0,128,0,-1--1--1,,1|(1013,676)|
+10,104,RVI,936,440,34,28,8,131,0,2,-1,0,0,0,-1--1--1,0-0-0,|12||255-0-0
+1,105,104,62,1,0,0,0,0,64,0,-1--1--1,,1|(813,409)|
+10,106,Team Perception of CC Availability,717,1118,92,26,8,3,0,0,0,0,0,0
+1,107,16,106,1,0,45,0,2,65,0,-1--1--1,|12||0-0-0,1|(744,1029)|
+1,108,20,11,1,0,0,0,0,128,0,-1--1--1,,1|(400,842)|
+10,109,Effect of Team Perception of CC Availability on Scheduling New Patients,419,1091,134,39,8,3,0,2,0,0,0,0,-1--1--1,0-0-0,|12||0-128-0
+1,110,106,109,1,0,0,0,0,128,0,-1--1--1,,1|(549,1190)|
+1,111,109,25,1,0,0,0,2,64,0,-1--1--1,|12||0-0-0,1|(394,979)|
+12,112,0,511,228,83,26,8,135,0,2,-1,0,0,0,-1--1--1,0-0-0,|12||0-128-255
+Focus on Actively Engaged Patients
+12,113,0,510,278,20,20,5,7,0,2,-1,0,0,0,-1--1--1,0-0-0,|12||0-128-255
+B
+12,114,0,755,235,53,26,8,7,0,2,-1,0,0,0,-1--1--1,0-0-0,|12||0-128-255
+Work More Hours
+12,115,0,754,288,20,20,4,7,0,2,-1,0,0,0,-1--1--1,0-0-0,|12||0-128-255
+B
+12,116,0,104,533,61,26,8,7,0,2,-1,0,0,0,-1--1--1,0-0-0,|12||0-128-255
+Change Appt Frequency
+12,117,0,103,579,20,20,4,7,0,2,-1,0,0,0,-1--1--1,0-0-0,|12||0-128-255
+B
+12,118,0,79,760,61,26,8,7,0,2,-1,0,0,0,-1--1--1,0-0-0,|12||0-128-255
+Starting New Patients
+12,119,0,86,816,20,20,4,7,0,2,-1,0,0,0,-1--1--1,0-0-0,|12||0-128-255
+B
+12,120,0,595,1007,78,26,8,7,0,2,-1,0,0,0,-1--1--1,0-0-0,|12||0-128-255
+Decision to Start Patient in CC
+12,121,0,599,1059,20,20,4,7,0,2,-1,0,0,0,-1--1--1,0-0-0,|12||0-128-255
+B
+10,122,Pts per Appt,-162,905,71,13,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|12||128-128-128
+1,123,122,11,0,0,0,0,0,128,0,-1--1--1,,1|(-48,894)|
+1,124,15,106,1,0,0,0,0,128,0,-1--1--1,,1|(924,1078)|
+1,125,100,25,1,0,0,0,0,128,0,-1--1--1,,1|(292,967)|
+10,126,Prop New Visit Freq,-216,700,69,26,8,3,0,0,0,0,0,0
+1,127,13,126,1,0,0,0,0,128,0,-1--1--1,,1|(-46,648)|
+1,128,11,126,1,0,0,0,0,128,0,-1--1--1,,1|(-93,805)|
+1,129,51,55,1,0,0,0,0,128,0,-1--1--1,,1|(954,731)|
+///---\\\
+:L<%^E!@
+1:Basecase9.vdf
+1:Basecase8.vdf
+1:Basecase7.vdf
+1:Basecase6.vdf
+1:Basecase5.vdf
+1:Basecase4.vdf
+1:Basecase3.vdf
+1:Basecase2.vdf
+9:Basecase9
+15:0,0,0,0,0,0
+19:70,0
+27:2,
+34:0,
+4:Time
+5:CC Scheduling Efficiency
+35:Date
+36:YYYY-MM-DD
+37:2016
+38:1
+39:1
+40:3
+41:0
+42:1
+24:0
+25:260
+26:260
