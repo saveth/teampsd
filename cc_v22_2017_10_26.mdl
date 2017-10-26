@@ -1,0 +1,361 @@
+{UTF-8}
+Actual RVI=
+	ZIDZ(Appointments in CC,Completing CC Appts Rate)
+	~	Week
+	~		~	:SUPPLEMENTARY 
+	|
+
+Additional Appt Capacity=
+	0
+	~	Appointment/Week
+	~		|
+
+Additional Appt Capacity for New Patients in Week 10=
+	0
+	~	Appointment/Week
+	~		|
+
+Appointments in CC= INTEG (
+	Booking CC Appts Rate+Rescheduling Appointments Rate-Completing CC Appts Rate,
+		0)
+	~	Appointment
+	~	The initial backlog is set to the equilibrium value determined by the \
+		arrival rate and target return interval (following Little's Law), along \
+		with the "rework" from rescheduling missed appointments.
+	|
+
+Appointments to Reschedule= INTEG (
+	True Missed Appointment Rate-Rescheduling Appointments Rate,
+		True Missed Appointment Rate*Time to Reschedule)
+	~	Appointment
+	~	The number of appointments to be rescheduled. This assumes that all missed \
+		appointments are eventually rescheduled.
+	|
+
+Appts Available for New Patients=
+	MAX(Current Appointment Capacity-Appts Used for Current Patients,0)+STEP(Additional Appt Capacity for New Patients in Week 10\
+		,10)
+	~	Appointment/Week
+	~		|
+
+Appts Used for Current Patients=
+	MIN(Desired Appt Completion Rate,Current Appointment Capacity)
+	~	Appointment/Week
+	~		|
+
+Avg Time in CC=
+	10
+	~	Week
+	~		|
+
+Baseline Appointment Capacity=
+	10
+	~	Appointment/Week
+	~		|
+
+Booking CC Appts Rate=
+	(Starting CC Rate/Patients per Appointment)
+	+
+	(Patients in CC/Patients per Appointment/Desired Return Visit Interval)
+	~	Appointment/Week
+	~	The booking appointment rate depends on the number of existing patients \
+		seen by the team and the number of new patients booked each week.
+	|
+
+Change to True Missed Opportunities in Week 10=
+	0
+	~	Dmnl
+	~	Adjust the proportion of appointments missed and rescheduled (i.e., \
+		rework).
+	|
+
+Completing CC Appts Rate=
+	Appts Used for Current Patients
+	~	Appointment/Week
+	~		|
+
+Current Appointment Capacity=
+	Official Appointment Capacity+Overbook Amount
+	~	Appointment/Week
+	~		|
+
+Desired Appt Completion Rate=
+	Appointments in CC/Desired Return Visit Interval
+	~	Appointment/Week
+	~		|
+
+Desired Return Visit Interval=
+	5
+	~	Week
+	~		|
+
+Difference between Total Official Hours and Actual Hours=
+	Recent Actual Capacity/Official Appointment Capacity
+	~	Dmnl
+	~	Ratio of the team's acutal appointments completed to their total official \
+		appointments offered.
+	|
+
+Effect of Fatigue on Appointment Completion Rate=
+	IF THEN ELSE(Fatigue Switch=1, Table for Effect of Fatigue on Appointment Cancellation\
+		(Difference between Total Official Hours and Actual Hours),1)
+	~	Dmnl
+	~	Working more intensely relative to normal team capacity reduces employee \
+		productivity.
+	|
+
+Ending CC Rate=
+	Patients in CC/Avg Time in CC
+	~	Patient/Week
+	~		|
+
+Fatigue Onset Time=
+	3
+	~	Week
+	~	Time for the extended workweeks to have an impact on employee fatigue and \
+		capability to keep appointments (from Oliva).
+	|
+
+Fatigue Switch=
+	1
+	~	Dmnl
+	~	Switch to control if fatigue response to working long hours is active.
+	|
+
+Official Appointment Capacity=
+	Baseline Appointment Capacity+Additional Appt Capacity
+	~	
+	~		|
+
+Overbook Amount=
+	5
+	~	Appointment/Week
+	~		|
+
+Patients in CC= INTEG (
+	Starting CC Rate-Ending CC Rate,
+		Starting CC Rate*Avg Time in CC*0)
+	~	Patient
+	~		|
+
+Patients per Appointment=
+	1
+	~	Patient/Appointment
+	~		|
+
+Patients Waiting to Start CC= INTEG (
+	Referrals to CC Rate-Starting CC Rate,
+		0)
+	~	Patient
+	~		~	:SUPPLEMENTARY 
+	|
+
+Recent Actual Capacity=
+	SMOOTHI(Current Appointment Capacity,Fatigue Onset Time,Current Appointment Capacity\
+		)
+	~	
+	~		|
+
+Referrals to CC Rate=
+	10
+	~	Patient/Week
+	~		|
+
+Rescheduling Appointments Rate=
+	Appointments to Reschedule/Time to Reschedule
+	~	Appointment/Week
+	~		|
+
+Starting CC Rate=
+	Appts Available for New Patients*Patients per Appointment
+	~	Patient/Week
+	~		|
+
+Table for Effect of Fatigue on Appointment Cancellation(
+	[(0,0)-(3,2)],(0,0.5),(0.5,0.6),(0.75,0.74),(1.25,1.3),(1.75,1.9),(2,2),(2.5,2),(3,2\
+		))
+	~	Dmnl
+	~	Extended workweeks leads to reduced productivity via increased missed \
+		appointments by clinicians and less time for patient reminder calls.
+	|
+
+Time to Reschedule=
+	2
+	~	Week
+	~		|
+
+True Missed Appointment Rate=
+	MAX(
+	
+	Completing CC Appts Rate*(True Missed Opportunities Percentage+STEP(Change to True Missed Opportunities in Week 10\
+		,10))*Effect of Fatigue on Appointment Completion Rate
+	
+	,0)
+	~	Appointment/Week
+	~	The number of appointments that must be re-scheduled, as either the \
+		clinician or the patient missed the appointment.  These missed \
+		appointments are affected by the baseline rate and ...
+	|
+
+True Missed Opportunities Percentage=
+	0.1
+	~	Dmnl
+	~		|
+
+********************************************************
+	.Control
+********************************************************~
+		Simulation Control Parameters
+	|
+
+FINAL TIME  = 100
+	~	Week
+	~	The final time for the simulation.
+	|
+
+INITIAL TIME  = 0
+	~	Week
+	~	The initial time for the simulation.
+	|
+
+SAVEPER  = 
+        TIME STEP 
+	~	Week [0,?]
+	~	The frequency with which output is stored.
+	|
+
+TIME STEP  = 0.03125
+	~	Week [0,?]
+	~	The time step for the simulation.
+	|
+
+\\\---/// Sketch information - do not modify anything except names
+V300  Do not put anything below this section - it will be ignored
+*View 1
+$192-192-192,0,Meiryo|10||0-0-0|0-0-0|0-0-255|-1--1--1|-1--1--1|96,96,100,0
+10,1,Patients in CC,405,496,49,23,3,131,0,0,0,0,0,0
+10,8,Appointments in CC,506,228,48,22,3,131,0,0,0,0,0,0
+10,12,Patients Waiting to Start CC,136,496,47,23,3,131,0,0,0,0,0,0
+12,13,48,-59,497,10,8,0,3,0,0,-1,0,0,0
+1,15,17,12,4,0,0,22,0,0,0,-1--1--1,,1|(51,496)|
+1,16,17,13,100,0,0,22,0,0,0,-1--1--1,,1|(-23,496)|
+11,17,0,8,496,6,8,34,3,0,0,1,0,0,0
+10,18,Referrals to CC Rate,8,522,48,18,40,131,0,0,-1,0,0,0
+1,20,22,1,4,0,0,22,0,0,0,-1--1--1,,1|(314,496)|
+1,21,22,12,100,0,0,22,0,0,0,-1--1--1,,1|(222,496)|
+11,22,0,267,496,6,8,34,3,0,0,1,0,0,0
+10,23,Starting CC Rate,267,515,55,11,40,3,0,0,-1,0,0,0
+12,24,48,637,496,10,8,0,3,0,0,-1,0,0,0
+1,26,28,24,4,0,0,22,0,0,0,-1--1--1,,1|(586,496)|
+1,27,28,1,100,0,0,22,0,0,0,-1--1--1,,1|(494,496)|
+11,28,0,540,496,6,8,34,3,0,0,1,0,0,0
+10,29,Ending CC Rate,540,515,52,11,40,3,0,0,-1,0,0,0
+12,30,48,249,228,10,8,0,3,0,0,-1,0,0,0
+1,32,34,8,4,0,0,22,0,0,0,-1--1--1,,1|(411,228)|
+1,33,34,30,100,0,0,22,0,0,0,-1--1--1,,1|(305,228)|
+11,34,0,358,228,6,8,34,3,0,0,1,0,0,0
+10,35,Booking CC Appts Rate,358,254,62,18,40,131,0,0,-1,0,0,0
+12,36,48,767,228,10,8,0,3,0,0,-1,0,0,0
+1,38,40,36,4,0,0,22,0,0,0,-1--1--1,,1|(705,228)|
+1,39,40,8,100,0,0,22,0,0,0,-1--1--1,,1|(597,228)|
+11,40,0,647,228,6,8,34,3,0,0,1,0,0,0
+10,41,Completing CC Appts Rate,647,254,49,18,40,131,0,0,-1,0,0,0
+10,42,Appointments to Reschedule,614,102,49,22,3,131,0,0,0,0,0,0
+12,43,48,786,102,10,8,0,3,0,0,-1,0,0,0
+1,45,47,42,4,0,0,22,0,0,0,-1--1--1,,1|(693,102)|
+1,46,47,43,100,0,0,22,0,0,0,-1--1--1,,1|(755,102)|
+11,47,0,729,102,6,8,34,3,0,0,1,0,0,0
+10,48,True Missed Appointment Rate,729,130,61,20,40,3,0,0,-1,0,0,0
+1,50,52,8,4,0,0,22,0,0,0,-1--1--1,,1|(498,158)|
+1,51,52,42,100,0,0,22,0,0,0,-1--1--1,,1|(534,102)|
+11,52,0,498,102,6,8,34,3,0,0,2,0,0,0
+10,53,Rescheduling Appointments Rate,428,102,64,21,40,131,0,0,-1,0,0,0
+10,54,Desired Return Visit Interval,546,398,66,20,8,3,0,0,0,0,0,0
+10,55,Desired Appt Completion Rate,720,398,56,20,8,3,0,0,0,0,0,0
+1,56,54,55,1,0,45,0,2,192,0,-1--1--1,|0||-1--1--1,1|(625,426)|
+10,59,Appts Used for Current Patients,747,579,55,20,8,3,0,0,0,0,0,0
+10,60,Current Appointment Capacity,719,710,71,20,8,3,0,0,0,0,0,0
+10,61,Appts Available for New Patients,533,645,62,20,8,3,0,0,0,0,0,0
+1,63,55,59,1,0,43,13,2,192,0,-1--1--1,|0||-1--1--1,1|(765,481)|
+1,64,60,59,1,0,43,0,2,64,0,-1--1--1,|0||-1--1--1,1|(711,631)|
+1,65,59,61,1,0,45,13,2,192,0,-1--1--1,|0||-1--1--1,1|(681,619)|
+1,66,61,23,1,0,43,13,2,192,0,-1--1--1,|0||-1--1--1,1|(393,605)|
+1,67,1,35,1,0,43,13,2,192,0,-1--1--1,|0||-1--1--1,1|(318,379)|
+1,68,8,55,1,0,43,13,2,192,0,-1--1--1,|0||-1--1--1,1|(655,293)|
+1,76,22,35,1,0,43,13,2,192,0,-1--1--1,|0||-1--1--1,1|(254,361)|
+1,77,60,61,1,0,43,0,2,64,0,-1--1--1,|0||-1--1--1,1|(658,673)|
+10,78,Patients per Appointment,182,369,44,20,8,3,0,0,0,0,0,0
+1,79,78,22,1,0,43,0,2,192,0,-1--1--1,|0||-1--1--1,1|(212,436)|
+1,80,78,35,1,0,45,0,2,192,0,-1--1--1,|0||-1--1--1,1|(253,305)|
+1,81,54,35,1,0,45,0,2,192,0,-1--1--1,|0||-1--1--1,1|(512,333)|
+1,82,59,41,1,0,43,0,2,192,0,-1--1--1,|0||-1--1--1,1|(792,395)|
+10,83,Avg Time in CC,645,551,50,11,8,3,0,2,0,0,0,0,-1--1--1,0-0-0,|0||255-0-0
+1,84,83,29,0,0,45,0,2,192,0,-1--1--1,|0||-1--1--1,1|(599,535)|
+1,85,1,29,1,0,43,0,2,128,0,-1--1--1,|0||-1--1--1,1|(490,541)|
+10,86,Time to Reschedule,267,101,39,20,8,3,0,0,0,0,0,0
+1,87,86,53,0,0,45,0,2,192,0,-1--1--1,|0||-1--1--1,1|(328,101)|
+1,88,42,53,1,0,43,0,2,192,0,-1--1--1,|0||-1--1--1,1|(479,71)|
+1,89,40,48,1,0,43,0,2,192,0,-1--1--1,|0||-1--1--1,1|(707,196)|
+10,90,True Missed Opportunities Percentage,909,67,45,30,8,3,0,2,0,0,0,0,-1--1--1,0-0-0,|0||255-0-0
+1,91,90,48,0,0,43,0,2,192,0,-1--1--1,|0||-1--1--1,1|(831,93)|
+10,92,Additional Appt Capacity for New Patients in Week 10,532,724,95,20,8,3,0,2,0,0,0,0,-1--1--1,0-0-0,|0||255-0-255
+1,93,92,61,0,0,43,0,2,192,0,-1--1--1,|0||-1--1--1,1|(532,691)|
+10,94,Actual RVI,582,353,36,11,8,3,0,0,0,0,0,0
+1,95,8,94,1,0,43,0,2,64,0,-1--1--1,|0||-1--1--1,1|(553,278)|
+1,96,41,94,1,0,45,0,2,64,0,-1--1--1,|0||-1--1--1,1|(603,303)|
+1,102,86,42,0,0,0,0,0,64,1,-1--1--1,,1|(428,101)|
+1,103,83,1,0,0,0,0,0,64,1,-1--1--1,,1|(532,525)|
+12,104,0,412,396,60,20,8,7,0,16,-1,0,0,0,0-0-0,0-0-0,|0|B|0-0-0
+Current Patients Come First
+12,105,0,411,361,16,16,4,135,0,16,-1,0,0,0,0-0-0,0-0-0,|0|B|0-0-0
+B
+10,106,Change to True Missed Opportunities in Week 10,910,127,84,20,8,3,0,2,0,0,0,0,-1--1--1,0-0-0,|0||255-0-255
+1,107,106,48,0,0,43,0,2,192,0,-1--1--1,|0||-1--1--1,1|(815,128)|
+10,108,Effect of Fatigue on Appointment Completion Rate,896,222,83,30,8,3,0,0,0,0,0,0
+10,109,Overbook Amount,726,774,60,11,8,3,0,2,0,0,0,0,-1--1--1,0-0-0,|0||255-0-255
+10,110,Baseline Appointment Capacity,909,748,73,20,8,3,0,2,0,0,0,0,-1--1--1,0-0-0,|0||255-0-0
+1,112,109,60,0,0,0,0,0,128,0,-1--1--1,,1|(723,753)|
+10,113,Recent Actual Capacity,911,528,54,18,3,131,0,0,0,0,0,0
+10,116,Table for Effect of Fatigue on Appointment Cancellation,1055,349,86,30,8,3,0,2,0,0,0,0,-1--1--1,0-0-0,|0||0-128-0
+10,117,Fatigue Switch,1060,271,49,11,8,3,0,2,0,0,0,0,-1--1--1,0-0-0,|0||255-0-255
+10,119,Fatigue Onset Time,967,608,47,20,8,3,0,0,-1,0,0,0
+1,120,119,113,0,0,45,0,2,64,0,-1--1--1,|0||-1--1--1,1|(942,572)|
+10,121,Difference between Total Official Hours and Actual Hours,957,419,69,27,8,131,0,0,0,0,0,0
+1,122,113,121,1,0,43,0,2,192,0,-1--1--1,|0||-1--1--1,1|(950,498)|
+1,124,121,108,1,0,43,0,2,192,0,-1--1--1,|0||-1--1--1,1|(955,324)|
+1,125,116,108,1,0,0,0,0,128,0,-1--1--1,,1|(995,280)|
+1,126,108,48,0,0,45,0,2,192,0,-1--1--1,|0||-1--1--1,1|(809,174)|
+1,127,117,108,0,0,0,0,0,128,0,-1--1--1,,1|(1008,255)|
+10,128,Additional Appt Capacity,1064,729,52,20,8,3,0,2,0,0,0,0,-1--1--1,0-0-0,|0||255-0-255
+1,129,128,131,0,0,0,0,0,128,0,-1--1--1,,1|(1001,704)|
+10,131,Official Appointment Capacity,925,674,68,20,8,3,0,0,0,0,0,0
+1,132,110,131,0,0,0,0,0,128,0,-1--1--1,,1|(915,717)|
+1,133,131,60,0,0,0,0,0,128,0,-1--1--1,,1|(830,689)|
+1,134,131,121,1,0,45,0,2,192,0,-1--1--1,|0||-1--1--1,1|(1061,575)|
+1,135,60,113,1,0,43,0,2,192,0,-1--1--1,|0||-1--1--1,1|(828,636)|
+12,136,0,869,349,70,20,8,7,0,16,-1,0,0,0,-1--1--1,0-0-0,|0|B|0-0-0
+Fatigue Increases Clinic Cancellations
+12,137,0,865,304,20,20,5,7,0,0,-1,0,0,0
+R
+///---\\\
+:L<%^E!@
+1:test2-oct24.vdf
+1:test-oct24.vdf
+9:test2-oct24
+15:0,0,0,0,0,0
+19:100,0
+27:2,
+34:0,
+4:Time
+5:Fatigue Switch
+35:Date
+36:YYYY-MM-DD
+37:2000
+38:1
+39:1
+40:3
+41:0
+42:1
+24:0
+25:100
+26:100
