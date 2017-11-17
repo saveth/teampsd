@@ -1,0 +1,879 @@
+{UTF-8}
+Use Team Data on Patients Starts in Week 50=
+	0
+	~	Dmnl
+	~	Switch to control if patient starts are based on team current state \
+		(default set to ignore current state, and instead match patient starts to \
+		allocation of appointment capacity).  "Zero" = if all existing patients \
+		can be seen at the desired RVI, then only start new patients if there are \
+		available appointment slots, 1 = patient start rate based on team's data
+	|
+
+New Patient Wait Time Goal[Diagnoses]=
+	IF THEN ELSE(New Patient Wait Time Switch[Diagnoses]=0, Team Data on New Patient Wait Time\
+		[Diagnoses], Desired New Patient Wait Time[Diagnoses])
+	~	Week
+	~	The desired number of weeks before the average new patient starts service. \
+		If the user input is zero, then the New Patient Wait Time Goal is based \
+		instead on the team's data.
+	|
+
+New Patient Wait Time Switch[Diagnoses]=
+	Desired New Patient Wait Time[Diagnoses]
+	~	Week [0,1,1]
+	~	Switch to control if new patient wait time goal is a user generated value, \
+		or estimated from the team's data (default set to ignore team's current \
+		state, and instead use user input).
+	|
+
+RVI Switch[Diagnoses]=
+	Desired RVI in Week 50[Diagnoses]
+	~	Week
+	~	Switch to control if desired return visit interval is based on team \
+		current state or on the VHA ideal (default set to use team's data).
+	|
+
+"Effect of \"Other MM Tasks Time\" on No-Shows"[Diagnoses]=
+	MIN(
+	IF THEN ELSE("Sensitivity of Changes in Other MM Tasks Time on No-Shows"[Diagnoses]=\
+		0,0,
+	
+	SMOOTHI(
+	(Time Available for Other MM Tasks[Diagnoses]^(ZIDZ(1,"Sensitivity of Changes in Other MM Tasks Time on No-Shows"\
+		[Diagnoses]))),
+	Overbook Downside Onset Time[Diagnoses], Time Available for Other MM Tasks[Diagnoses\
+		])
+	)
+	,1)
+	~	Dmnl
+	~	Squeezing in more patients per day reduces the time spent on appointment \
+		prep and follow-up.  Patients start to experience this reduced quality by \
+		their next appointment, which occurs after the teams actual return visit \
+		interval. This is constrained from going above a 100% increase to the \
+		baseline missed appointments rate.
+	|
+
+Referrals after Week 50[Diagnoses]=SAMPLE IF TRUE(
+	Time=45, Referrals Necessary to Maintain Wait Time[Diagnoses], 0)
+	~	Patient/Week
+	~	Sets the base referral rate after Week 50 to the equilibrium value (or \
+		very close to it, as established in Week 45).  This allows the end user to \
+		see the relative effects of their policy experiments (all conducted after \
+		Week 50) on new patient wait time.
+	|
+
+Referrals to MM Rate[Diagnoses]=
+	(
+	IF THEN ELSE(Time<=50,Referrals Necessary to Maintain Wait Time[Diagnoses],Referrals after Week 50\
+		[Diagnoses])
+	)
+	
+	*Effect of Care Delays on Referrals[Diagnoses]
+	
+	*(1+STEP(Additional Referrals in Week 50[Diagnoses],50))
+	~	Patient/Week
+	~	The number of referrals is currently unmeasurable, and is thus \
+		endogeneously generated to maintain the new patient wait time (either as \
+		measured from the team's data, or using their desired new patient wait \
+		time) during initialization (i.e., before week 50).  After week 50, the \
+		equilibrium rate is held as the base referral rate, but can be affected by \
+		both the "Effect of Care Delays on Referrals" and any end-user experiments \
+		with additional referrals. This allows the user to observe relative \
+		changes in the new patient wait time.
+	|
+
+Effect of Care Delays on Referrals[Diagnoses]=
+	MIN((Perceived Care Delays[Diagnoses]/New Patient Wait Time Goal[Diagnoses])^Sensitivity of Referrals to Delays\
+		[Diagnoses],1)
+	~	Dmnl
+	~	The deviation from the target delivery delay is adjusted by an exponent \
+		that reflects how sensitive providers' triage decisions are to these \
+		deviations. It is constrained from going above 1 (our assumption is that \
+		lower than expected new patient wait times do not increase referrals).
+	|
+
+"% Slot Allocation Switch (no X)"=
+	1
+	~	Dmnl [0,2,1]
+	~	Switch to control if a calculation or manual input sets the % of \
+		providers' time allocated to appointments for each primary diagnosis. "0" \
+		selects a calculation based solely on the baseline % of appointments' \
+		primary diagnosis from the teams data, a "1" selects a calculation that \
+		includes this baseline % and differences in desired RVI per diagnosis, and \
+		a "2" selects a completely manual user-controled option.
+	|
+
+"% Slot Allocation Switch (w X)"=
+	1
+	~	Dmnl [0,2,1]
+	~	Switch to control if a calculation or manual input sets the % of \
+		providers' time allocated to appointments for each primary diagnosis. "0" \
+		selects a calculation based solely on the baseline % of appointments' \
+		primary diagnosis from the teams data, a "1" selects a calculation that \
+		includes this baseline % and differences in desired RVI per diagnosis, and \
+		a "2" selects a completely manual user-controled option.
+	|
+
+"% Slots Allocated (no X, no RVI)"[Diagnoses]=
+	"Baseline % of Appts with Each Primary Diagnosis (no X)"[Diagnoses]/SUM("Baseline % of Appts with Each Primary Diagnosis (no X)"\
+		[Diagnoses!])
+	~	Dmnl
+	~	The relative amount of provider time spent in appointments focused on each \
+		diagnosis, normalized to sum to 100%.
+	|
+
+"% Slots Allocated (no X, w RVI)"[Diagnoses]=
+	("% Slots Allocated (no X, no RVI)"[Diagnoses] / "Relative RVI (no X)"[Diagnoses])
+	/
+	SUM(("% Slots Allocated (no X, no RVI)"[Diagnoses!] / "Relative RVI (no X)"[Diagnoses\
+		!]))
+	~	Dmnl
+	~	The relative amount of provider time spent in appointments focused on each \
+		diagnosis, taking relative differences in RVI into account, normalized to \
+		sum to 100%.
+	|
+
+"% Slots Allocated (w X, no RVI)"[Diagnoses]=
+	"Baseline % of Appts with Each Primary Diagnosis (w X)"[Diagnoses]/SUM("Baseline % of Appts with Each Primary Diagnosis (w X)"\
+		[Diagnoses!])
+	~	Dmnl
+	~	The relative amount of provider time spent in appointments focused on each \
+		diagnosis, normalized to sum to 100%.
+	|
+
+"% Slots Allocated (w X, w RVI)"[Diagnoses]=
+	("% Slots Allocated (w X, no RVI)"[Diagnoses] / "Relative RVI (w X)"[Diagnoses])
+	/
+	SUM(("% Slots Allocated (w X, no RVI)"[Diagnoses!] / "Relative RVI (w X)"[Diagnoses!\
+		]))
+	~	Dmnl
+	~	The relative amount of provider time spent in appointments focused on each \
+		diagnosis, taking relative differences in RVI into account, normalized to \
+		sum to 100%.
+	|
+
+"% Slots Allocated to Each Diagnosis (no X)"[Diagnoses]=
+	IF THEN ELSE ("% Slot Allocation Switch (no X)"=1,"% Slots Allocated (no X, w RVI)"[\
+		Diagnoses],IF THEN ELSE("% Slot Allocation Switch (no X)"=2,"Manual % Slots Allocation (no X)"\
+		[Diagnoses],"% Slots Allocated (no X, no RVI)"[Diagnoses]))
+	~	Dmnl
+	~	The default is set to use % slots based on the team's appointment data.  \
+		If the switch is set to "1," then the model adjusts the % slots allocation \
+		by normalized differences in desired RVI between diagnoses.  If the switch \
+		is set to "2," then the model allows for manual user input.
+	|
+
+"% Slots Allocated to Each Diagnosis (w X)"[Diagnoses]=
+	IF THEN ELSE ("% Slot Allocation Switch (w X)"=1,"% Slots Allocated (w X, w RVI)"[Diagnoses\
+		],IF THEN ELSE("% Slot Allocation Switch (w X)"=2,"Manual % Slots Allocation (w X)"\
+		[Diagnoses],"% Slots Allocated (w X, no RVI)"[Diagnoses]))
+	~	Dmnl
+	~	The default is set to use % slots based on the team's appointment data.  \
+		If the switch is set to "1," then the model adjusts the % slots allocation \
+		by normalized differences in desired RVI between diagnoses.  If the switch \
+		is set to "2," then the model allows for manual user input.
+	|
+
+"Baseline % of Appts with Each Primary Diagnosis (w X)"[Diagnoses]=
+	0.25,0.25,0.25,0.5
+	~	Dmnl
+	~	Percent of appointments for each primary diagnosis (AUD, DEP, OUD, and \
+		OtherNeeds), based on team's own data.
+	|
+
+"Baseline Appointment Supply (no X-Waiver)"=
+	10
+	~	Appointment/Week
+	~	The baseline number of the appointments offered each week by providers who \
+		do NOT have a DEA X-Waiver, taken from the team's data. However, the \
+		number of appointments offered specifically for this service is currently \
+		unmeasurable.  We estimate the available supply from the upper quartile of \
+		appointments completed each week for this service.
+	|
+
+"Baseline Appointment Supply (with X-Waiver)"=
+	10
+	~	Appointment/Week
+	~	The baseline number of the appointments offered each week by providers who \
+		DO have a DEA X-Waiver, taken from the team's data. However, the number of \
+		appointments offered specifically for this service is currently \
+		unmeasurable.  We estimate the available supply from the upper quartile of \
+		appointments completed each week for this service.
+	|
+
+"Relative RVI (w X)"[Diagnoses]=
+	Return Visit Interval used when Booking[Diagnoses]/SUM(Return Visit Interval used when Booking\
+		[Diagnoses!])
+	~	Dmnl
+	~	The relative RVI for each diagnosis, normalized to sum to 100%.
+	|
+
+"Official Appointment Supply (no X-Waiver)"=
+	"Baseline Appointment Supply (no X-Waiver)"+STEP("Reallocation of Appt Supply in Week 50 (no X)"\
+		,50)
+	~	Appointment/Week
+	~	The number of official appointments offered each week by providers who do \
+		not have X-Waivers.
+	|
+
+Appts Available for New Patients[Diagnoses]=
+	MAX(Current Appointment Supply[Diagnoses]-Appts Used for Existing Patients[Diagnoses\
+		],0)
+	+STEP(Reallocation of Appt Supply for New MM Patients in Week 50[Diagnoses],50)
+	~	Appointment/Week
+	~	Appointments available for new patients is the remaining supply of \
+		appointments, after demand from existing patients is satisfied.  The team \
+		can also set aside appointments specifically for new patients.
+	|
+
+Appts Used for Existing Patients[Diagnoses]=
+	MIN(Desired Appt Completion Rate[Diagnoses],Current Appointment Supply[Diagnoses])
+	~	Appointment/Week
+	~	Appointments for current patients consume appointment supply. The number \
+		of appointments used each week is the lesser of the existing patient \
+		demand (based on the number of appointments booked and the desired return \
+		visit interval) or the supply of available appointments per week.
+	|
+
+"Baseline % of Appts with Each Primary Diagnosis (no X)"[Diagnoses]=
+	0.25,0.25,0.25,0.5
+	~	Dmnl
+	~	Percent of appointments for each primary diagnosis (AUD, DEP, OUD, and \
+		OtherNeeds), based on team's own data.
+	|
+
+"Reallocation of Appt Supply in Week 50 (w X)"=
+	0
+	~	Appointment/Week
+	~	Manually adjust the number of official appointments offered in week 50, \
+		with the assumption that these appoints come at the expense of \
+		appointments offered for other services.
+	|
+
+"Official Appointment Supply(with X-Waiver)"=
+	"Baseline Appointment Supply (with X-Waiver)"+STEP("Reallocation of Appt Supply in Week 50 (w X)"\
+		,50)
+	~	Appointment/Week
+	~	The number of official appointments offered each week by providers who \
+		have X-Waivers.
+	|
+
+Current Appointment Supply[Diagnoses]=
+	(
+	("Official Appointment Supply (no X-Waiver)"*"% Slots Allocated to Each Diagnosis (no X)"\
+		[Diagnoses])
+	+
+	("Official Appointment Supply(with X-Waiver)"*"% Slots Allocated to Each Diagnosis (w X)"\
+		[Diagnoses])
+	)
+	
+	*(1+STEP(Start Overbooking in Week 50[Diagnoses],50))
+	~	Appointment/Week
+	~	The total number of appointments available for patient care depends on the \
+		baseline number of appointments offered and the additional appointments \
+		squeezed into the schedule through overbooking.
+	|
+
+"Relative RVI (no X)"[Diagnoses]=
+	Return Visit Interval used when Booking[Diagnoses]/SUM(Return Visit Interval used when Booking\
+		[Diagnoses!])
+	~	Dmnl
+	~	The relative RVI for each diagnosis, normalized to sum to 100%.
+	|
+
+"Manual % Slots Allocation (no X)"[Diagnoses]=
+	0,0,0,0
+	~	Dmnl
+	~	Any set of percentage is possible, but they should sum to 1.  For \
+		providers without X-Waivers, they should not allocate any time to OUD \
+		treatment, thus the value for the third % should always be zero.
+	|
+
+"Sensitivity of Changes in Other MM Tasks Time on No-Shows"[Diagnoses]=
+	0
+	~	Dmnl
+	~	Exponent to the effect of changes in other MM task time on likilihood of \
+		patients missing their appointment. An exponent below 1 indicates that \
+		patients are not sensitive to small changes in other MM task time; an \
+		exponent greater than one indicates that patients are very sensitive to \
+		small changes.  Using "1" implies a direct relationship between the two -- \
+		i.e., a 20% drop in time for other MM tasks will cause a 20% increase in \
+		the normal missed appointment rate.  Using "zero" implies that there is no \
+		relationship between overbooks and missed appointments. A value of 0.5 \
+		would cause that same 20% decrease in time for other MM tasks to cause a \
+		4% increase in the missed appointment rate.  A value of 2 would cause that \
+		20% decrease to increase the missed appointment rate by 45%.
+	|
+
+"Manual % Slots Allocation (w X)"[Diagnoses]=
+	0,0,0,0
+	~	Dmnl
+	~	Any set of percentages is possible, but they should sum to 1.
+	|
+
+"Reallocation of Appt Supply in Week 50 (no X)"=
+	0
+	~	Appointment/Week
+	~	Manually adjust the number of official appointments offered in week 50, \
+		with the assumption that these appoints come at the expense of \
+		appointments offered for other services.
+	|
+
+Actual New Patient Wait Time[Diagnoses]=
+	ZIDZ(Patients Waiting to Start MM[Diagnoses],Starting MM Rate[Diagnoses])
+	~	Week
+	~	By Little's Law, the average wait time for new patients is the quotent of \
+		the number of patients waiting and the rate at which they start service.
+	|
+
+Actual RVI[Diagnoses]=
+	ZIDZ(Appointments in MM[Diagnoses],Completing MM Appts Rate[Diagnoses])
+	~	Week
+	~	By Little's Law, the average time between appointments for existing \
+		patients is the quotent of the number of appointments and the rate at \
+		which they are completed.  If there is more demand for completing \
+		appointments than there is available capacity, then actual return visit \
+		interval will increase, even if the desired RVI doesn't change.
+	|
+
+Additional Referrals in Week 50[Diagnoses]=
+	0, 0, 0, 0
+	~	Dmnl
+	~	Manually adjust the new patient referrals in week 50, relative to the \
+		original referral rate.
+	|
+
+Appointments in MM[Diagnoses]= INTEG (
+	Booking MM Appts Rate[Diagnoses]+Rescheduling Appointments Rate[Diagnoses]-Completing MM Appts Rate\
+		[Diagnoses],
+		1)
+	~	Appointment
+	~	Total number of appointments booked, initial value set 1, to show how the \
+		schedule fills up as the model comes to equilibrium.
+	|
+
+Appointments to Reschedule[Diagnoses]= INTEG (
+	True Missed Appointment Rate[Diagnoses]-Rescheduling Appointments Rate[Diagnoses],
+		True Missed Appointment Rate[Diagnoses]*Time to Reschedule[Diagnoses])
+	~	Appointment
+	~	The number of appointments to be rescheduled. This assumes that all missed \
+		appointments are eventually rescheduled.
+	|
+
+Booking MM Appts Rate[Diagnoses]=
+	(Starting MM Rate[Diagnoses]/Patients per Appointment[Diagnoses])
+	+
+	(Patients in MM[Diagnoses]/Patients per Appointment[Diagnoses]/Return Visit Interval used when Booking\
+		[Diagnoses])
+	~	Appointment/Week
+	~	The booking appointment rate depends on the number of existing patients \
+		seen by the team and the number of new patients booked each week.
+	|
+
+Change to True Missed Appointments in Week 50[Diagnoses]=
+	0, 0, 0, 0
+	~	Dmnl
+	~	Manually adjust the proportion of appointments missed and rescheduled \
+		(i.e., rework).  With different entries for different primary diagnosis, \
+		this assumes that teams can target their efforts to reducing missed \
+		appointments on particular cohorts.
+	|
+
+Completing MM Appts Rate[Diagnoses]=
+	Appts Used for Existing Patients[Diagnoses]
+	~	Appointment/Week
+	~	The rate at which appointments are completed is the lesser of the existing \
+		patient demand for care (driven by the number of booked appointments and \
+		the revisit interval) or current supply of appointments per week.
+	|
+
+Desired Appt Completion Rate[Diagnoses]=
+	Appointments in MM[Diagnoses]/Return Visit Interval used when Booking[Diagnoses]
+	~	Appointment/Week
+	~	The desired completion rate depends on the number of appointments to \
+		complete and the desired return visit interval.
+	|
+
+Desired New Patient Wait Time[Diagnoses]=
+	2, 2, 2, 2
+	~	Week
+	~	The team's desired average wait time for new patients to this service \
+		(default value is 4 weeks).
+	|
+
+Desired RVI in Week 50[Diagnoses]=
+	5,5,2.5,5
+	~	Week
+	~	Desired return visit interval, regardless of whether or not the team has \
+		enough supply for the patient demand.
+	|
+
+Diagnoses:
+	AUD,DEP,OUD,OtherNeeds
+	~	
+	~		|
+
+Ending CC Rate[Diagnoses]=
+	Patients in MM[Diagnoses]/Median Engagement Time in MM[Diagnoses]
+	~	Patient/Week
+	~		|
+
+Maximum Start Rate[Diagnoses]=
+	Patients Waiting to Start MM[Diagnoses]/Minimum Time to Schedule[Diagnoses]
+	~	Patient/Week
+	~	The maximum new patient start rate is determined by the new patient \
+		waiting list and minimum time to schedule patient appointments.
+	|
+
+Median Engagement Time in MM[Diagnoses]=
+	20
+	~	Week
+	~	Median engagement time estimated from the team's own data.
+	|
+
+Minimum Time to Schedule[Diagnoses]=
+	0.1
+	~	Week
+	~	The fastest possible time to schedule a new patient appointment.
+	|
+
+Start Overbooking in Week 50[Diagnoses]=
+	0,0,0,0
+	~	Dmnl [0,1]
+	~	Manually adjust the relative number of additional appointments offered \
+		each week (over the official appointment capacity) in week 50, with the \
+		assumption that these additional appointments come at the expense of \
+		non-patient facing care (e.g., team coordination, reminder calls, \
+		treatment planning, etc.).  Example: entering 0.5 would indicate a 50% \
+		increase in supply over the current, official, number of appointments per \
+		week.
+	|
+
+Overbook Downside Onset Time[Diagnoses]=
+	Actual RVI[Diagnoses]
+	~	Week
+	~	Time for sacrificing face-to-face patient time for team coordination time \
+		and patient reminder calls to affect no-show rate.
+	|
+
+Patients in MM[Diagnoses]= INTEG (
+	Starting MM Rate[Diagnoses]-Ending CC Rate[Diagnoses],
+		1)
+	~	Patient
+	~	Total number of patients in treatment, initial value set 1, to show how \
+		the clinic fills up as the model comes to equilibrium.
+	|
+
+Patients per Appointment[Diagnoses]=
+	1
+	~	Patient/Appointment
+	~	Always 1 patient per appointment, except for group visits.
+	|
+
+Patients Waiting to Start MM[Diagnoses]= INTEG (
+	Referrals to MM Rate[Diagnoses]-Starting MM Rate[Diagnoses],
+		Appts Available for New Patients[Diagnoses]*Patients per Appointment[Diagnoses]*New Patient Wait Time Goal\
+		[Diagnoses])
+	~	Patient
+	~	Total number of patients waiting to start the service, initial value set \
+		to provide the desired wait time in equilibrium.
+	|
+
+Perceived Care Delays[Diagnoses]=
+	SMOOTH(Actual New Patient Wait Time[Diagnoses],Time to Perceive Delays[Diagnoses])
+	~	Week
+	~	Clinicians' perception of care delays for starting new patients.
+	|
+
+Reallocation of Appt Supply for New MM Patients in Week 50[Diagnoses]=
+	0
+	~	Appointment/Week
+	~	Manually adjust the clinical hours allocated specifically to new patients \
+		in week 50, with the assumption that these appointments come from reducing \
+		appointments in other services.
+	|
+
+Referrals Necessary to Maintain Wait Time[Diagnoses]=
+	MIN((Patients Waiting to Start MM[Diagnoses]/New Patient Wait Time Goal[Diagnoses])*\
+		((XIDZ(New Patient Wait Time Goal[Diagnoses],Actual New Patient Wait Time[Diagnoses\
+		],1))^10),100)
+	~	Patient/Week
+	~	Endogenously generated referral rate to maintain the new patient wait time \
+		goal.  It is capped at 100; exponent makes it very sensitive to changes in \
+		start rate.
+	|
+
+Rescheduling Appointments Rate[Diagnoses]=
+	Appointments to Reschedule[Diagnoses]/Time to Reschedule[Diagnoses]
+	~	Appointment/Week
+	~	The rescheduling rate depends on the total number of appointments to \
+		reschedule and the average time it takes to reschedule them.
+	|
+
+Return Visit Interval used when Booking[Diagnoses]=
+	IF THEN ELSE(RVI Switch[Diagnoses]=0,Team Data on RVI[Diagnoses],IF THEN ELSE(Time<50\
+		, Team Data on RVI[Diagnoses],STEP(Desired RVI in Week 50[Diagnoses],50)))
+	~	Week
+	~	The VA's goal to see each patient in this service once in every x weeks. \
+		If the user input is zero, then the RVI is based instead on the team's \
+		data.  If the user inputs their desired RVI, then the model uses that \
+		value starting in Week 50.
+	|
+
+Sensitivity of Referrals to Delays[Diagnoses]=
+	0
+	~	Dmnl [-3,0]
+	~	Exponent to the effect of care delay on service attractiveness. The \
+		negative sign indicates that this is inversely coded, i.e., attractiveness \
+		drops as care delay increases. A value of "-1" implies the assumption that \
+		a doubling of the new patient wait time over the desired wait time will \
+		cut the referral rate in half.  For the same situation, a value of "-0.5" \
+		would reduce the referral rate to 71% of its original value, and a value \
+		of -1.5 would reduce the referral rate to 35%.
+	|
+
+Starting MM Rate[Diagnoses]=
+	MIN(Maximum Start Rate[Diagnoses],IF THEN ELSE(Use Team Data on Patients Starts in Week 50\
+		=1, IF THEN ELSE(Time>50,Team Data on Patient Starts[Diagnoses],(Appts Available for New Patients\
+		[Diagnoses]*Patients per Appointment[Diagnoses])),(Appts Available for New Patients\
+		[Diagnoses]*Patients per Appointment[Diagnoses])))
+	~	Patient/Week
+	~	The number of patients starting the service is a function the team's time allocated \
+		to that service, allowing the model to start in equilibrium.
+		If the Use Team Data on Patient Starts switch is active, then the start \
+		rate after Week 50 is switched to the current state data of patient starts \
+		for the team (presumably based on patient characteristics and percieved \
+		delays in receiving care in that service).
+	|
+
+Team Data on New Patient Wait Time[Diagnoses]=
+	2, 2, 2, 2
+	~	Week
+	~	New patients' mean wait time based on team's own data.
+	|
+
+Team Data on Patient Starts[Diagnoses]=
+	1.5, 1.5, 1.5, 1.5
+	~	Patient/Week
+	~	New patients scheduling rate based on team's own data.
+	|
+
+Team Data on RVI[Diagnoses]=
+	6.5,6.5,6.5,6.5
+	~	Week
+	~	Actual median return visit interval, based on team's own data.
+	|
+
+Time Available for Other MM Tasks[Diagnoses]=
+	STEP(Start Overbooking in Week 50[Diagnoses],50)
+	~	Dmnl
+	~	This represents the relative change in time available for other MM-related \
+		tasks consumed by overbooking patient visits. We assume that these "extra" \
+		appointments come at the expense of "other MM related tasks," such as , \
+		team coordination, patient reminder calls, chart review and other \
+		appointment prep, etc.
+	|
+
+Time to Perceive Delays[Diagnoses]=
+	4
+	~	Week
+	~	Time to measure, report, and respond to differences between desired and \
+		actual Return Visit Interval for a service. Set to 4 weeks, i.e., a \
+		monthly staff meeting update.
+	|
+
+Time to Reschedule[Diagnoses]=
+	2
+	~	Week
+	~	Average time to reschedule an appointment that was missed is estimated at \
+		2 weeks, accounting for large variation in time to make productive contact \
+		with the patient and their availability.
+	|
+
+True Missed Appointment Percentage[Diagnoses]=
+	0.1, 0.1, 0.1, 0.1
+	~	Dmnl
+	~	The no-show rate based on team's own data. The same % is used for every \
+		appointment, regardless of primary diagnosis.
+	|
+
+True Missed Appointment Rate[Diagnoses]=
+	MAX(Completing MM Appts Rate[Diagnoses]*True Missed Appointment Percentage[Diagnoses\
+		]
+	
+	*(1+"Effect of \"Other MM Tasks Time\" on No-Shows"[Diagnoses])
+	
+	*(1+STEP(Change to True Missed Appointments in Week 50[Diagnoses],50))
+	
+	
+	,0)
+	~	Appointment/Week
+	~	The number of appointments that must be re-scheduled, as either the \
+		clinician or the patient missed the appointment.  These missed \
+		appointments are affected by the baseline rate and changes in the time the \
+		team allocates to non-patient-facing care.  It is constrained from going \
+		below zero.
+	|
+
+********************************************************
+	.Control
+********************************************************~
+		Simulation Control Parameters
+	|
+
+FINAL TIME  = 100
+	~	Week
+	~	The final time for the simulation.
+	|
+
+INITIAL TIME  = 0
+	~	Week
+	~	The initial time for the simulation.
+	|
+
+SAVEPER  = 
+        TIME STEP
+	~	Week [0,?]
+	~	The frequency with which output is stored.
+	|
+
+TIME STEP  = 0.03125
+	~	Week [0,?]
+	~	The time step for the simulation.
+	|
+
+\\\---/// Sketch information - do not modify anything except names
+V300  Do not put anything below this section - it will be ignored
+*Patient Flow
+$192-192-192,0,Meiryo|10||0-0-0|0-0-0|0-0-255|-1--1--1|-1--1--1|96,96,90,0
+10,1,Patients in MM,580,517,49,23,3,131,0,0,0,0,0,0
+10,2,Appointments in MM,681,249,48,22,3,131,0,0,0,0,0,0
+10,3,Patients Waiting to Start MM,311,517,47,23,3,131,0,0,0,0,0,0
+12,4,48,88,518,10,8,0,3,0,0,-1,0,0,0
+1,5,7,3,4,0,0,22,0,0,0,-1--1--1,,1|(212,517)|
+1,6,7,4,100,0,0,22,0,0,0,-1--1--1,,1|(123,517)|
+11,7,48,155,517,6,8,34,3,0,0,1,0,0,0
+10,8,Referrals to MM Rate,155,543,53,20,40,131,0,0,-1,0,0,0
+1,9,11,1,4,0,0,22,0,0,0,-1--1--1,,1|(489,517)|
+1,10,11,3,100,0,0,22,0,0,0,-1--1--1,,1|(397,517)|
+11,11,1372,442,517,6,8,34,3,0,0,1,0,0,0
+10,12,Starting MM Rate,442,536,57,11,40,3,0,0,-1,0,0,0
+12,13,48,812,517,10,8,0,3,0,0,-1,0,0,0
+1,14,16,13,4,0,0,22,0,0,0,-1--1--1,,1|(761,517)|
+1,15,16,1,100,0,0,22,0,0,0,-1--1--1,,1|(669,517)|
+11,16,48,715,517,6,8,34,3,0,0,1,0,0,0
+10,17,Ending CC Rate,715,536,52,11,40,3,0,0,-1,0,0,0
+12,18,48,424,249,10,8,0,3,0,0,-1,0,0,0
+1,19,21,2,4,0,0,22,0,0,0,-1--1--1,,1|(586,249)|
+1,20,21,18,100,0,0,22,0,0,0,-1--1--1,,1|(480,249)|
+11,21,48,533,249,6,8,34,3,0,0,1,0,0,0
+10,22,Booking MM Appts Rate,533,275,41,20,40,131,0,0,-1,0,0,0
+12,23,48,942,249,10,8,0,3,0,0,-1,0,0,0
+1,24,26,23,4,0,0,22,0,0,0,-1--1--1,,1|(880,249)|
+1,25,26,2,100,0,0,22,0,0,0,-1--1--1,,1|(772,249)|
+11,26,48,822,249,6,8,34,3,0,0,1,0,0,0
+10,27,Completing MM Appts Rate,822,275,52,20,40,131,0,0,-1,0,0,0
+10,28,Appointments to Reschedule,789,123,49,22,3,131,0,0,0,0,0,0
+12,29,48,961,123,10,8,0,3,0,0,-1,0,0,0
+1,30,32,28,4,0,0,22,0,0,0,-1--1--1,,1|(868,123)|
+1,31,32,29,100,0,0,22,0,0,0,-1--1--1,,1|(930,123)|
+11,32,48,904,123,6,8,34,3,0,0,1,0,0,0
+10,33,True Missed Appointment Rate,904,151,61,20,40,3,0,0,-1,0,0,0
+1,34,36,2,4,0,0,22,0,0,0,-1--1--1,,1|(673,179)|
+1,35,36,28,100,0,0,22,0,0,0,-1--1--1,,1|(709,123)|
+11,36,908,673,123,6,8,34,3,0,0,2,0,0,0
+10,37,Rescheduling Appointments Rate,603,123,64,21,40,131,0,0,-1,0,0,0
+10,38,Return Visit Interval used when Booking,721,419,67,20,8,3,0,0,0,0,0,0
+10,39,Desired Appt Completion Rate,895,419,56,20,8,3,0,0,0,0,0,0
+1,40,38,39,1,0,45,0,2,192,0,-1--1--1,|10||0-0-0,1|(797,451)|
+10,41,Appts Used for Existing Patients,922,600,55,20,8,3,0,0,0,0,0,0
+10,42,Appts Available for New Patients,708,673,62,20,8,3,0,0,0,0,0,0
+1,43,39,41,1,0,43,13,2,64,0,-1--1--1,|10||0-0-0,1|(940,502)|
+1,44,41,42,1,0,45,13,2,64,0,-1--1--1,|10||0-0-0,1|(841,652)|
+1,45,42,12,1,0,43,13,2,64,0,-1--1--1,|10||0-0-0,1|(565,625)|
+1,46,1,22,1,0,43,13,2,192,0,-1--1--1,|10||0-0-0,1|(493,400)|
+1,47,2,39,1,0,43,13,2,64,0,-1--1--1,|10||0-0-0,1|(825,320)|
+1,48,11,22,1,0,43,13,2,192,0,-1--1--1,|10||0-0-0,1|(429,382)|
+10,49,Patients per Appointment,373,353,44,20,8,3,1,0,0,0,0,0
+1,50,49,11,1,1,43,0,2,192,0,-1--1--1,|10||0-0-0,1|(390,437)|
+1,51,49,22,1,1,45,0,2,192,0,-1--1--1,|10||0-0-0,1|(440,308)|
+1,52,38,22,1,0,45,0,2,192,0,-1--1--1,|10||0-0-0,1|(687,354)|
+1,53,41,27,1,0,43,0,2,192,0,-1--1--1,|10||0-0-0,1|(968,417)|
+10,54,Median Engagement Time in MM,806,582,69,20,8,3,0,2,0,0,0,0,-1--1--1,0-0-0,|10||255-0-0
+1,55,54,17,0,0,45,0,2,192,0,-1--1--1,|10||0-0-0,1|(757,557)|
+1,56,1,17,1,0,43,0,2,128,0,-1--1--1,|10||0-0-0,1|(665,562)|
+10,57,Time to Reschedule,456,122,39,20,8,3,0,0,0,0,0,0
+1,58,57,37,0,0,45,0,2,192,0,-1--1--1,|10||0-0-0,1|(510,122)|
+1,59,28,37,1,0,43,0,2,192,0,-1--1--1,|10||0-0-0,1|(654,92)|
+1,60,26,33,1,0,43,0,2,192,0,-1--1--1,|10||0-0-0,1|(882,217)|
+10,61,True Missed Appointment Percentage,1063,150,44,30,8,3,0,2,0,0,0,0,-1--1--1,0-0-0,|10||255-0-0
+1,62,61,33,0,0,43,0,2,192,0,-1--1--1,|10||0-0-0,1|(999,150)|
+10,63,Reallocation of Appt Supply for New MM Patients in Week 50,703,754,92,30,8,3,0,2,0,0,0,0,-1--1--1,0-0-0,|10||255-0-255
+10,64,Actual RVI,786,191,36,11,8,3,0,0,0,0,0,0
+1,65,2,64,1,0,43,0,2,64,0,-1--1--1,|10||0-0-0,1|(751,226)|
+1,66,27,64,1,0,45,0,2,64,0,-1--1--1,|10||0-0-0,1|(787,222)|
+1,67,57,28,0,0,0,0,0,64,1,-1--1--1,,1|(610,122)|
+12,68,0,586,365,67,20,8,7,0,16,-1,0,0,0,-1--1--1,0-0-0,|10|B|0-0-0
+Balancing Existing and New Patients
+12,69,0,585,330,16,16,4,135,0,16,-1,0,0,0,0-0-0,0-0-0,|10|B|0-0-0
+B
+10,70,Change to True Missed Appointments in Week 50,1062,76,86,20,8,3,0,2,0,0,0,0,-1--1--1,0-0-0,|10||255-0-255
+1,71,70,32,0,0,43,0,2,192,0,-1--1--1,|10||0-0-0,1|(958,106)|
+10,72,"Effect of \"Other MM Tasks Time\" on No-Shows",1002,293,70,27,3,131,0,0,0,0,0,0
+10,73,Start Overbooking in Week 50,1059,655,61,20,8,3,0,2,0,0,0,0,-1--1--1,0-0-0,|10||255-0-255
+10,74,Overbook Downside Onset Time,1011,375,51,31,8,131,1,0,-1,0,0,0
+10,75,Time Available for Other MM Tasks,1058,444,60,20,8,131,0,0,0,0,0,0
+10,76,Team Data on RVI,793,484,68,15,8,131,0,2,0,0,0,0,-1--1--1,0-0-0,|10||255-0-0
+1,77,76,38,1,0,43,0,2,192,0,-1--1--1,|10||0-0-0,1|(735,454)|
+10,78,RVI Switch,684,497,37,11,8,3,7,2,0,0,0,0,-1--1--1,0-0-0,|10||255-0-255
+1,79,78,38,0,7,0,0,0,128,0,-1--1--1,,1|(697,468)|
+10,80,Team Data on Patient Starts,580,577,48,20,8,3,0,2,0,0,0,0,-1--1--1,0-0-0,|10||255-0-0
+1,81,80,12,1,0,43,0,2,192,0,-1--1--1,|10||0-0-0,1|(509,563)|
+10,82,Actual New Patient Wait Time,369,658,65,20,8,131,0,0,0,0,0,0
+1,83,3,82,1,0,43,13,2,64,0,-1--1--1,|10||0-0-0,1|(340,560)|
+1,84,12,82,1,0,45,0,2,64,0,-1--1--1,|10||0-0-0,1|(399,568)|
+10,85,Additional Referrals in Week 50,155,451,65,20,8,3,0,2,0,0,0,0,-1--1--1,0-0-0,|10||255-0-255
+1,86,85,7,0,0,43,0,2,192,0,-1--1--1,|10||0-0-0,1|(155,484)|
+10,87,Team Data on New Patient Wait Time,520,685,66,20,8,3,0,2,0,0,0,0,-1--1--1,0-0-0,|10||255-0-0
+10,88,Maximum Start Rate,312,427,51,20,8,3,1,0,-1,0,0,0
+1,89,88,11,1,1,43,0,2,64,0,-1--1--1,|10||0-0-0,1|(396,463)|
+10,90,Minimum Time to Schedule,238,355,58,20,8,3,1,0,0,0,0,0
+1,91,90,88,1,1,45,0,2,192,0,-1--1--1,|10||0-0-0,1|(317,391)|
+1,92,3,88,1,1,43,0,2,192,0,-1--1--1,|10||0-0-0,1|(296,471)|
+10,93,Desired RVI in Week 50,622,459,48,20,8,3,0,2,0,0,0,0,-1--1--1,0-0-0,|10||255-0-255
+1,94,93,38,1,0,43,0,2,192,0,-1--1--1,|10||0-0-0,1|(686,455)|
+1,95,64,74,1,1,43,0,2,192,0,-1--1--1,|10||0-0-0,1|(861,258)|
+1,96,75,72,1,0,45,0,2,192,0,-1--1--1,|10||0-0-0,1|(1062,364)|
+1,97,72,33,1,0,43,0,2,192,0,-1--1--1,|10||0-0-0,1|(974,235)|
+1,98,74,72,1,1,45,0,2,192,0,-1--1--1,|10||0-0-0,1|(990,321)|
+1,99,63,42,1,0,43,0,2,192,0,-1--1--1,|10||0-0-0,1|(704,715)|
+10,100,Effect of Care Delays on Referrals,128,778,70,20,8,3,0,0,0,0,0,0
+10,101,Sensitivity of Referrals to Delays,261,875,63,20,8,3,0,2,0,0,0,0,-1--1--1,0-0-0,|10||0-128-0
+10,102,Time to Perceive Delays,411,868,56,20,8,3,0,0,0,0,0,0
+10,103,Perceived Care Delays,413,796,40,20,3,3,0,0,0,0,0,0
+1,104,103,100,1,0,43,13,2,192,0,-1--1--1,|10||0-0-0,1|(199,829)|
+1,105,101,100,1,0,0,0,0,128,0,-1--1--1,,1|(142,827)|
+1,106,102,103,0,0,45,0,2,192,0,-1--1--1,|10||0-0-0,1|(411,838)|
+1,107,100,8,1,0,45,13,2,192,0,-1--1--1,|10||0-0-0,1|(75,633)|
+1,108,82,103,1,0,43,13,2,192,0,-1--1--1,|10||0-0-0,1|(436,729)|
+10,109,New Patient Wait Time Goal,297,740,59,20,8,3,0,0,0,0,0,0
+10,110,New Patient Wait Time Switch,277,805,59,20,8,3,1,2,0,0,0,0,-1--1--1,0-0-0,|10||255-0-255
+1,111,87,109,1,0,43,0,2,64,0,-1--1--1,|10||0-0-0,1|(411,711)|
+1,112,110,109,1,1,0,0,0,128,0,-1--1--1,,1|(292,766)|
+10,113,Desired New Patient Wait Time,520,734,69,20,8,3,0,2,0,0,0,0,-1--1--1,0-0-0,|10||255-0-255
+1,114,113,109,1,0,43,0,2,192,0,-1--1--1,|10||0-0-0,1|(426,740)|
+1,115,109,100,1,0,45,0,2,64,0,-1--1--1,|10||0-0-0,1|(187,741)|
+1,116,42,3,0,0,0,0,0,64,1,-1--1--1,,1|(514,596)|
+1,117,109,3,0,0,0,0,0,64,1,-1--1--1,,1|(303,636)|
+1,118,49,3,0,1,0,0,0,64,1,-1--1--1,,1|(345,426)|
+1,119,3,120,1,0,43,0,2,192,0,-1--1--1,|10||0-0-0,1|(248,560)|
+10,120,Referrals Necessary to Maintain Wait Time,241,610,75,20,8,3,0,0,0,0,0,0
+1,121,120,8,1,0,43,0,2,128,0,-1--1--1,|10||0-0-0,1|(208,572)|
+1,122,109,120,1,0,0,0,2,192,0,-1--1--1,|10||0-0-0,1|(255,706)|
+1,123,82,120,1,0,45,0,2,192,0,-1--1--1,|10||0-0-0,1|(320,615)|
+12,124,0,146,678,53,20,8,7,0,16,-1,0,0,0,-1--1--1,0-0-0,|10|B|0-0-0
+Delays Reduce Referrals
+12,125,0,145,643,16,16,4,135,0,16,-1,0,0,0,0-0-0,0-0-0,|10|B|0-0-0
+B
+10,126,Time,90,485,28,11,8,2,1,3,-1,0,0,0,128-128-128,0-0-0,|10||128-128-128
+1,127,126,8,0,1,0,0,0,64,0,-1--1--1,,1|(111,504)|
+1,128,73,75,1,0,45,0,2,192,0,-1--1--1,|10||0-0-0,1|(996,574)|
+10,129,"Sensitivity of Changes in Other MM Tasks Time on No-Shows",1120,226,82,30,8,3,0,2,-1,0,0,0,-1--1--1,0-0-0,|10||0-128-0
+1,130,129,72,1,0,0,0,0,64,0,-1--1--1,,1|(1092,284)|
+10,131,Current Appointment Supply,926,725,73,20,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|10||128-128-128
+1,132,131,41,1,0,43,0,2,64,0,-1--1--1,|10||0-0-0,1|(905,663)|
+1,133,131,42,1,0,43,0,2,64,0,-1--1--1,|10||0-0-0,1|(846,694)|
+12,134,0,968,712,6,11,8,7,0,0,-1,0,0,0
+  
+1,135,73,134,1,0,43,0,2,192,0,-1--1--1,|10||0-0-0,1|(972,679)|
+12,136,0,191,166,108,108,6,135,0,0,-1,0,0,0
+The four primary diagnoses in this model are, AUD, DEP, OUD, and  OtherNeeds, respectively.
+1,137,93,78,1,7,0,0,0,128,0,-1--1--1,,1|(646,480)|
+10,138,Time,772,361,28,11,8,2,7,3,-1,0,0,0,128-128-128,0-0-0,|0||128-128-128
+1,139,138,38,0,7,0,0,0,64,0,-1--1--1,,1|(755,380)|
+10,140,Time,477,478,28,11,8,2,1,3,-1,0,0,0,128-128-128,0-0-0,|0||128-128-128
+1,141,140,12,0,1,0,0,0,64,0,-1--1--1,,1|(463,501)|
+10,142,Use Team Data on Patients Starts in Week 50,446,608,59,24,8,131,0,2,-1,0,0,0,-1--1--1,0-0-0,|0||255-0-255
+1,143,142,12,0,0,0,0,0,64,0,-1--1--1,,1|(444,572)|
+1,144,113,110,0,1,0,0,0,128,0,-1--1--1,,1|(400,768)|
+10,145,Referrals after Week 50,231,483,48,20,8,3,1,0,-1,0,0,0
+1,146,145,8,0,1,43,0,2,64,0,-1--1--1,|0||-1--1--1,1|(198,508)|
+1,147,126,145,0,1,0,0,0,128,0,-1--1--1,,1|(143,484)|
+1,148,120,145,0,1,43,0,2,192,0,-1--1--1,|0||-1--1--1,1|(236,553)|
+\\\---/// Sketch information - do not modify anything except names
+V300  Do not put anything below this section - it will be ignored
+*Supply
+$192-192-192,0,Meiryo|10||0-0-0|0-0-0|0-0-255|-1--1--1|-1--1--1|96,96,90,0
+10,1,"Baseline Appointment Supply (no X-Waiver)",507,585,73,20,8,3,0,2,0,0,0,0,-1--1--1,0-0-0,|10||255-0-0
+10,2,"Reallocation of Appt Supply in Week 50 (no X)",307,508,85,20,8,131,0,2,0,0,0,0,-1--1--1,0-0-0,|10||255-0-255
+1,3,2,4,0,0,43,0,2,64,0,-1--1--1,|10||0-0-0,1|(407,508)|
+10,4,"Official Appointment Supply (no X-Waiver)",508,508,72,20,8,3,0,0,0,0,0,0
+1,5,1,4,0,0,43,0,2,192,0,-1--1--1,|10||0-0-0,1|(507,554)|
+10,6,"% Slots Allocated to Each Diagnosis (no X)",515,439,74,20,8,3,0,0,0,0,0,0
+10,7,"Baseline % of Appts with Each Primary Diagnosis (no X)",131,298,91,30,8,3,0,2,0,0,0,0,-1--1--1,0-0-0,|10||255-0-0
+1,8,7,9,1,0,43,0,2,192,0,-1--1--1,|10||0-0-0,1|(236,298)|
+10,9,"% Slots Allocated (no X, no RVI)",322,299,58,20,8,3,0,0,0,0,0,0
+10,10,"% Slots Allocated (no X, w RVI)",307,220,58,20,8,3,0,0,0,0,0,0
+1,11,10,6,1,0,43,0,2,192,0,-1--1--1,|10||0-0-0,1|(440,272)|
+1,12,9,6,1,0,43,0,2,192,0,-1--1--1,|10||0-0-0,1|(418,334)|
+10,13,"% Slot Allocation Switch (no X)",319,439,57,20,8,3,1,2,0,0,0,0,-1--1--1,0-0-0,|10||255-0-255
+1,14,13,6,1,1,0,0,0,128,0,-1--1--1,,1|(401,439)|
+10,15,"Relative RVI (no X)",307,159,55,20,8,3,0,0,0,0,0,0
+1,16,15,10,0,0,43,0,2,192,0,-1--1--1,|10||0-0-0,1|(307,182)|
+1,17,9,10,1,0,43,0,2,192,0,-1--1--1,|10||0-0-0,1|(273,262)|
+10,18,"Manual % Slots Allocation (no X)",320,383,57,20,8,3,0,2,0,0,0,0,-1--1--1,0-0-0,|10||255-0-255
+1,19,18,6,1,0,43,0,2,192,0,-1--1--1,|10||0-0-0,1|(419,386)|
+10,20,"Baseline Appointment Supply (with X-Waiver)",756,583,78,20,8,3,0,2,0,0,0,0,-1--1--1,0-0-0,|10||255-0-0
+1,21,20,24,0,0,43,0,2,192,0,-1--1--1,|10||0-0-0,1|(756,554)|
+10,22,"Reallocation of Appt Supply in Week 50 (w X)",965,508,83,20,8,131,0,2,0,0,0,0,-1--1--1,0-0-0,|10||255-0-255
+1,23,22,24,0,0,43,0,2,192,0,-1--1--1,|10||0-0-0,1|(863,509)|
+10,24,"Official Appointment Supply(with X-Waiver)",756,512,76,20,8,3,0,0,0,0,0,0
+10,25,"% Slots Allocated to Each Diagnosis (w X)",753,441,71,20,8,3,0,0,0,0,0,0
+10,26,"Baseline % of Appts with Each Primary Diagnosis (w X)",1163,296,89,30,8,3,0,2,0,0,0,0,-1--1--1,0-0-0,|10||255-0-0
+1,27,26,28,1,0,43,0,2,192,0,-1--1--1,|10||0-0-0,1|(1059,296)|
+10,28,"% Slots Allocated (w X, no RVI)",961,297,69,20,8,3,0,0,0,0,0,0
+10,29,"% Slots Allocated (w X, w RVI)",946,218,69,20,8,3,0,0,0,0,0,0
+1,30,29,25,1,0,43,0,2,192,0,-1--1--1,|10||0-0-0,1|(793,302)|
+1,31,28,25,1,0,43,0,2,192,0,-1--1--1,|10||0-0-0,1|(883,321)|
+10,32,"% Slot Allocation Switch (w X)",949,440,57,20,8,3,1,2,0,0,0,0,-1--1--1,0-0-0,|10||255-0-255
+1,33,32,25,1,1,0,0,0,128,0,-1--1--1,,1|(871,437)|
+10,34,"Relative RVI (w X)",946,157,53,20,8,3,0,0,0,0,0,0
+1,35,34,29,0,0,43,0,2,192,0,-1--1--1,|10||0-0-0,1|(946,180)|
+1,36,28,29,1,0,43,0,2,192,0,-1--1--1,|10||0-0-0,1|(912,260)|
+10,37,"Manual % Slots Allocation (w X)",953,386,54,20,8,3,0,2,0,0,0,0,-1--1--1,0-0-0,|10||255-0-255
+1,38,37,25,1,0,43,0,2,192,0,-1--1--1,|10||0-0-0,1|(863,390)|
+10,39,Start Overbooking in Week 50,634,201,66,20,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|10||128-128-128
+10,40,Current Appointment Supply,635,290,68,20,8,3,0,0,0,0,0,0
+1,41,6,40,1,0,43,0,2,192,0,-1--1--1,|10||0-0-0,1|(577,377)|
+1,42,4,40,1,0,43,0,2,192,0,-1--1--1,|10||0-0-0,1|(594,432)|
+1,43,25,40,1,0,43,0,2,192,0,-1--1--1,|10||0-0-0,1|(683,375)|
+1,44,24,40,1,0,43,0,2,192,0,-1--1--1,|10||0-0-0,1|(655,425)|
+1,45,39,40,0,0,43,0,2,192,0,-1--1--1,|10||0-0-0,1|(634,238)|
+10,46,Return Visit Interval used when Booking,306,94,72,20,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|10||128-128-128
+1,47,46,15,0,0,0,0,0,64,0,-1--1--1,,1|(306,119)|
+10,48,Return Visit Interval used when Booking,945,94,72,20,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|10||128-128-128
+1,49,48,34,0,0,0,0,0,64,0,-1--1--1,,1|(945,118)|
+///---\\\
+:L<%^E!@
+1:nov13-OUD-Baseline.vdf
+1:nov13-OUD-RVI.vdf
+1:nov13-OUD-RVI+RVIsupply.vdf
+9:nov13-OUD-RVI+RVIsupply-2
+15:0,0,0,0,0,0
+19:90,1
+27:2,
+34:0,
+4:Time
+5:Referrals after Week 50[Diagnoses]
+35:Date
+36:YYYY-MM-DD
+37:2000
+38:1
+39:1
+40:3
+41:0
+42:1
+24:0
+25:100
+26:100
+6:OUD
